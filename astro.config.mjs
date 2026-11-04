@@ -14,6 +14,8 @@ const site =
     : 'https://ayafouad.com');
 
 export default defineConfig({
+  // The old MDX case study is replaced by the custom page.
+  redirects: { '/work/thndrx': '/case-studies/thndrx/' },
   site,
   integrations: [mdx(), sitemap()],
   // 'assets' instead of Astro's default '_astro' so previews can be published anywhere
