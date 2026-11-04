@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import AboutBackdrop from '../components/AboutBackdrop.astro';
+import DiamondPainting from '../components/DiamondPainting.astro';
 import { site } from '../site';
 
 // Most recent first. This list is a timeline, so it reads top to bottom.
@@ -90,8 +92,10 @@ const principles = [
 ---
 
 <Base title="About" description={`About ${site.name}: ${site.role}.`}>
-  <section class="frame grid grid-cols-4 gap-x-6 pt-10 sm:pt-16">
-    <div class="col-span-4 md:col-span-3">
+  <div class="relative isolate">
+  <AboutBackdrop />
+  <section class="frame grid grid-cols-4 items-start gap-x-6 gap-y-12 pt-10 sm:pt-16">
+    <div class="col-span-4 md:col-span-2">
       <h1 class="settle font-serif text-[2.6rem] font-light leading-[1.08] tracking-[-0.02em] sm:text-[3.6rem]">
         Hi, I’m {site.firstName}.
       </h1>
@@ -105,6 +109,9 @@ const principles = [
         I specialize in design systems and AI-integrated design workflows, and I’m interested in
         finance and wellness.
       </p>
+    </div>
+    <div class="col-span-4 md:col-span-2">
+      <DiamondPainting />
     </div>
   </section>
 
@@ -172,4 +179,5 @@ const principles = [
       }
     </ol>
   </section>
+  </div>
 </Base>

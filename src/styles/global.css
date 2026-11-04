@@ -12,6 +12,7 @@
   --color-ink: #4a0d28;        /* body text, deep plum */
   --color-ink-soft: #80405f;   /* secondary text */
   --color-line: #cdb6c8;       /* hairlines and borders */
+  --color-night: #2a0817;      /* deep plum-black, behind the diamond painting */
   --color-dusk: #771441;       /* the one accent: links, focus (plum) */
 
   /* Card tints for case studies on the board */

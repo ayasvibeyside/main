@@ -1,0 +1,75 @@
+---
+// A soft blend of the whole palette (lilac, yellow, mustard, plum) with a few blurred orchid
+// blooms drifting through it. Purely decorative: it sits behind the page content.
+// The bloom is drawn once as a <symbol>; the soft, watercolour edge comes from a turbulence
+// displacement plus a light blur.
+const spots = [
+  [58, 150], [76, 162], [100, 128], [118, 140], [70, 205], [90, 214],
+  [282, 150], [300, 162], [262, 128], [280, 140], [312, 205], [292, 214],
+  [190, 40], [200, 62], [192, 96], [176, 300], [208, 322], [226, 340], [150, 330],
+];
+---
+
+<div class="backdrop" aria-hidden="true">
+  <svg width="0" height="0" class="absolute">
+    <defs>
+      <filter id="watercolour" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="7" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G" result="d" />
+        <feGaussianBlur in="d" stdDeviation="3.2" />
+      </filter>
+      <radialGradient id="petal" cx="50%" cy="42%" r="70%">
+        <stop offset="0" stop-color="#fbf6cc" />
+        <stop offset="0.55" stop-color="#ede288" />
+        <stop offset="1" stop-color="#d9c85a" />
+      </radialGradient>
+      <symbol id="orchid-bloom" viewBox="0 0 400 400">
+        <g filter="url(#watercolour)">
+          <ellipse cx="200" cy="86" rx="52" ry="84" fill="url(#petal)" />
+          <ellipse cx="142" cy="292" rx="46" ry="92" transform="rotate(28 142 292)" fill="url(#petal)" />
+          <ellipse cx="258" cy="292" rx="46" ry="92" transform="rotate(-28 258 292)" fill="url(#petal)" />
+          <ellipse cx="108" cy="186" rx="108" ry="80" transform="rotate(-16 108 186)" fill="url(#petal)" />
+          <ellipse cx="292" cy="186" rx="108" ry="80" transform="rotate(16 292 186)" fill="url(#petal)" />
+          {spots.map(([x, y]) => <circle cx={x} cy={y} r="9" fill="#771441" opacity="0.8" />)}
+          <ellipse cx="168" cy="240" rx="34" ry="46" transform="rotate(-22 168 240)" fill="#daa43c" />
+          <ellipse cx="232" cy="240" rx="34" ry="46" transform="rotate(22 232 240)" fill="#daa43c" />
+          <ellipse cx="200" cy="276" rx="30" ry="52" fill="#daa43c" />
+          <ellipse cx="200" cy="238" rx="22" ry="32" fill="#771441" />
+          <ellipse cx="200" cy="184" rx="28" ry="30" fill="#e5d5e1" />
+          <ellipse cx="200" cy="206" rx="13" ry="14" fill="#771441" />
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <svg class="bloom bloom-a" viewBox="0 0 400 400"><use href="#orchid-bloom" /></svg>
+  <svg class="bloom bloom-b" viewBox="0 0 400 400"><use href="#orchid-bloom" /></svg>
+  <svg class="bloom bloom-c" viewBox="0 0 400 400"><use href="#orchid-bloom" /></svg>
+</div>
+
+<style>
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
+    background:
+      radial-gradient(60% 30% at 92% 3%, rgb(237 226 136 / 0.95), transparent 72%),
+      radial-gradient(46% 24% at 3% 17%, rgb(218 164 60 / 0.55), transparent 72%),
+      radial-gradient(55% 22% at 72% 36%, rgb(237 226 136 / 0.6), transparent 70%),
+      radial-gradient(50% 22% at 6% 52%, rgb(119 20 65 / 0.2), transparent 70%),
+      radial-gradient(58% 24% at 94% 70%, rgb(218 164 60 / 0.5), transparent 70%),
+      radial-gradient(70% 22% at 18% 97%, rgb(237 226 136 / 0.6), transparent 70%);
+  }
+  .bloom {
+    position: absolute;
+    opacity: 0.8;
+  }
+  .bloom-a { width: min(780px, 90vw); top: -70px; right: -170px; transform: rotate(14deg); }
+  .bloom-b { width: min(560px, 80vw); top: 40%; left: -270px; transform: rotate(-22deg); opacity: 0.45; }
+  .bloom-c { width: min(600px, 80vw); bottom: -4%; right: -300px; transform: rotate(160deg); opacity: 0.5; }
+  .absolute { position: absolute; }
+</style>

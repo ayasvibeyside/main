@@ -1,0 +1,707 @@
+---
+// Digital diamond painting: a small, satisfying toy. Pick a colour, then click or drag to
+// press diamonds into the canvas. The picture is an orchid, drawn from the site palette.
+// Sounds are synthesized in the browser (no audio files). Progress is remembered locally.
+const pattern = [
+  '.............YY.............',
+  '............YYYY............',
+  '...........YYYYYY...........',
+  '...........YYPPYY...........',
+  '...........YLPPLY...........',
+  '..........YYLLPPYY..........',
+  '.....YYYYYYYLLPPYYYYYYY.....',
+  '...YYYYYYYYYYPPYYYYYYYYYY...',
+  '.YYYYYYYYPPYYPPYYYYYYPPYYYY.',
+  '.YPPYLLLLPPYYYYYYYLLLPPYPPY.',
+  'YYPPLLLPPLLYYYYYYLLPPLLLPPYY',
+  'YYYPPLLPPLLYYKKYYLLPPLPPLYYY',
+  'YYYPPLLLLLLYKKKKYLLLLLPPLYYY',
+  'YYYLLPPLLLLYKKKKYLLLLLLLLPPY',
+  'YYYLLPPLLLMMKPPKMMLLLLLLLPPY',
+  'YYYYPPLLLMMMMPPMMMMLLLLPPYYY',
+  'YYYYPPYYYMMMMPPMMMMYYYYPPYYY',
+  '.YYYYYYYYMMMMPPMMMMYYYYYYYY.',
+  '...YYYYYYYMMMPPMMMYYYYYYY...',
+  '.....YYPPLLMMKKMMLLLPPY.....',
+  '....YYLPPLYYMKKMYYLLPPYY....',
+  '....YYLLLLYY.MM.YYLLLLYY....',
+  '....YYLLLPP......YYPPLYY....',
+  '....YYLLYPP......YYPPLYY....',
+  '....YYYYPP........YYYPPY....',
+  '....YYYYP..........YYPPY....',
+  '....YYYY............YYYY....',
+  '............................',
+];
+
+// Gem colours, numbered like the key on a real diamond painting kit.
+const colors = [
+  { key: 'Y', n: 1, name: 'Yellow', hex: '#ede288' },
+  { key: 'L', n: 2, name: 'Pale yellow', hex: '#f8f2be' },
+  { key: 'M', n: 3, name: 'Mustard', hex: '#daa43c' },
+  { key: 'P', n: 4, name: 'Plum', hex: '#a12b63' },
+  { key: 'K', n: 5, name: 'Lilac', hex: '#e5d5e1' },
+];
+
+const total = pattern.join('').replace(/\./g, '').length;
+const counts = Object.fromEntries(
+  colors.map((c) => [c.key, pattern.join('').split(c.key).length - 1]),
+);
+---
+
+<section class="dp" data-dp data-pattern={JSON.stringify(pattern)} data-colors={JSON.stringify(colors)} aria-labelledby="dp-title">
+  <div class="dp-card">
+    <div class="dp-head">
+      <h2 id="dp-title" class="font-serif text-[1.7rem] font-light leading-tight tracking-[-0.01em]">
+        My current obsession: digital diamond painting
+      </h2>
+      <p class="dp-hint">Pick a colour, then click or drag to press the diamonds into place.</p>
+    </div>
+
+    <canvas
+      class="dp-canvas"
+      tabindex="0"
+      role="application"
+      aria-label="Diamond painting of an orchid. Use the arrow keys to move, Space to place a diamond, and the number keys 1 to 5 to choose a colour."
+    ></canvas>
+
+    <div class="dp-tray" role="group" aria-label="Diamond colours">
+      {
+        colors.map((c, i) => (
+          <button type="button" class="dp-swatch" data-key={c.key} aria-pressed={i === 0 ? 'true' : 'false'} style={`--c:${c.hex}`}>
+            <span class="dp-gem" aria-hidden="true"></span>
+            <span class="dp-num">{c.n}</span>
+            <span class="dp-name sr-only">{c.name}</span>
+            <span class="dp-left" data-left={c.key}>{counts[c.key]}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="dp-foot">
+      <div class="dp-progress">
+        <span class="dp-bar" aria-hidden="true"><span class="dp-fill"></span></span>
+        <span class="dp-count" data-count>0 of {total} placed</span>
+      </div>
+      <div class="dp-actions">
+        <button type="button" class="dp-btn" data-sound aria-pressed="true">Sound on</button>
+        <button type="button" class="dp-btn" data-reset>Start over</button>
+      </div>
+    </div>
+    <p class="sr-only" role="status" aria-live="polite" data-status></p>
+  </div>
+</section>
+
+<style>
+  .dp-card {
+    background: var(--color-night);
+    color: #f2e9ef;
+    border-radius: 26px;
+    padding: 1.25rem;
+    box-shadow: 0 30px 60px -30px rgb(42 8 23 / 0.7);
+  }
+  .dp-card[data-done='true'] {
+    box-shadow:
+      0 0 0 1px rgb(237 226 136 / 0.5),
+      0 30px 70px -20px rgb(237 226 136 / 0.35);
+  }
+  .dp-hint {
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    color: #d9c3d4;
+    max-width: 52ch;
+  }
+  .dp-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-top: 1rem;
+    border-radius: 18px;
+    background: #1f0612;
+    touch-action: none;
+    cursor: pointer;
+    outline-offset: 3px;
+  }
+  .dp-tray {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+  .dp-swatch {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.55rem 0.25rem 0.45rem;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.06);
+    border: 1.5px solid transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 150ms, border-color 150ms, transform 150ms;
+  }
+  .dp-swatch:hover { background: rgb(255 255 255 / 0.1); }
+  .dp-swatch[aria-pressed='true'] {
+    background: rgb(255 255 255 / 0.12);
+    border-color: var(--c);
+  }
+  .dp-swatch[data-done='true'] { opacity: 0.55; }
+  .dp-swatch[data-hint='true'] { animation: dp-hint 700ms ease-in-out 2; }
+  .dp-gem {
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 0.45rem;
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.65) 0%, rgb(255 255 255 / 0) 42%),
+      linear-gradient(315deg, rgb(0 0 0 / 0.28) 0%, rgb(0 0 0 / 0) 45%),
+      var(--c);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  }
+  .dp-num { font-size: 0.8rem; font-weight: 600; }
+  .dp-left { font-size: 0.72rem; color: #d9c3d4; font-variant-numeric: tabular-nums; }
+  .dp-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .dp-progress { display: flex; align-items: center; gap: 0.7rem; font-size: 0.85rem; color: #d9c3d4; }
+  .dp-bar { width: 7.5rem; height: 6px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
+  .dp-fill { display: block; height: 100%; width: 0; background: #ede288; border-radius: inherit; transition: width 250ms ease-out; }
+  .dp-count { font-variant-numeric: tabular-nums; }
+  .dp-actions { display: flex; gap: 0.5rem; }
+  .dp-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.1);
+    color: #f2e9ef;
+    cursor: pointer;
+    transition: background 150ms;
+  }
+  .dp-btn:hover { background: rgb(255 255 255 / 0.18); }
+  .dp-btn[aria-pressed='false'] { color: #b79aac; text-decoration: line-through; }
+  .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ede288; }
+  @keyframes dp-hint {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dp-swatch[data-hint='true'] { animation: none; }
+    .dp-fill { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-dp]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const pattern: string[] = JSON.parse(root.dataset.pattern!);
+    const colors: { key: string; n: number; name: string; hex: string }[] = JSON.parse(root.dataset.colors!);
+    const N = pattern.length;
+    const byKey = Object.fromEntries(colors.map((c) => [c.key, c]));
+    const canvas = root.querySelector<HTMLCanvasElement>('.dp-canvas')!;
+    const ctx = canvas.getContext('2d')!;
+    const card = root.querySelector<HTMLElement>('.dp-card')!;
+    const countEl = root.querySelector<HTMLElement>('[data-count]')!;
+    const fillEl = root.querySelector<HTMLElement>('.dp-fill')!;
+    const statusEl = root.querySelector<HTMLElement>('[data-status]')!;
+    const soundBtn = root.querySelector<HTMLButtonElement>('[data-sound]')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('[data-reset]')!;
+    const swatches = [...root.querySelectorAll<HTMLButtonElement>('.dp-swatch')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const cellKey = (x: number, y: number) => pattern[y][x];
+    const isPaint = (x: number, y: number) => cellKey(x, y) !== '.';
+    const placed: boolean[][] = pattern.map((r) => [...r].map(() => false));
+    const totals: Record<string, number> = {};
+    const left: Record<string, number> = {};
+    for (const c of colors) {
+      totals[c.key] = pattern.join('').split(c.key).length - 1;
+      left[c.key] = totals[c.key];
+    }
+    const total = Object.values(totals).reduce((a, b) => a + b, 0);
+    let placedCount = 0;
+    let selected = colors[0].key;
+    let focus = { x: 14, y: 14 };
+    let showFocus = false;
+
+    /* ---------- saved progress ---------- */
+    const STORE = 'dp-orchid-v1';
+    const save = () => {
+      try {
+        localStorage.setItem(STORE, placed.map((r) => r.map((v) => (v ? '1' : '0')).join('')).join(''));
+      } catch {}
+    };
+    const load = () => {
+      try {
+        const s = localStorage.getItem(STORE);
+        if (!s || s.length !== N * N) return;
+        for (let y = 0; y < N; y++)
+          for (let x = 0; x < N; x++)
+            if (s[y * N + x] === '1' && isPaint(x, y)) {
+              placed[y][x] = true;
+              left[cellKey(x, y)]--;
+              placedCount++;
+            }
+      } catch {}
+    };
+
+    /* ---------- colour helpers ---------- */
+    const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    const mix = (hex: string, to: number, t: number) => {
+      const [r, g, b] = rgb(hex).map((v) => Math.round(v + (to - v) * t));
+      return `rgb(${r} ${g} ${b})`;
+    };
+    const light = (hex: string, t: number) => mix(hex, 255, t);
+    const dark = (hex: string, t: number) => mix(hex, 0, t);
+
+    /* ---------- drawing ---------- */
+    let size = 0;
+    let cell = 0;
+    let dpr = 1;
+    type Spark = { x: number; y: number; t0: number; delay: number; big: boolean; hex: string };
+    let sparks: Spark[] = [];
+    let raf = 0;
+
+    function layout() {
+      const r = canvas.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      size = r.width;
+      cell = size / N;
+      canvas.width = canvas.height = Math.round(size * dpr);
+      draw();
+    }
+
+    function round(x: number, y: number, w: number, h: number, r: number) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+    }
+
+    function drawTile(x: number, y: number) {
+      const k = cellKey(x, y);
+      const hot = k === selected;
+      const px = x * cell + 1;
+      const py = y * cell + 1;
+      const s = cell - 2;
+      round(px, py, s, s, cell * 0.2);
+      // a faint wash of the gem's own colour, so the picture can be guessed before it is built
+      ctx.fillStyle = mix(byKey[k].hex, 42, hot ? 0.72 : 0.86);
+      ctx.fill();
+      if (hot) {
+        ctx.strokeStyle = 'rgb(255 255 255 / 0.35)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.fillStyle = hot ? 'rgb(255 255 255 / 0.9)' : 'rgb(255 255 255 / 0.34)';
+      ctx.font = `600 ${cell * 0.5}px Figtree Variable, system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(byKey[k].n), x * cell + cell / 2, y * cell + cell / 2 + 0.5);
+    }
+
+    function drawGem(x: number, y: number, hex: string) {
+      const px = x * cell + 0.8;
+      const py = y * cell + 0.8;
+      const s = cell - 1.6;
+      const cx = px + s / 2;
+      const cy = py + s / 2;
+      const inset = s * 0.22;
+      ctx.save();
+      round(px, py, s, s, cell * 0.2);
+      ctx.clip();
+      ctx.fillStyle = hex;
+      ctx.fillRect(px, py, s, s);
+      // four facets meeting in the middle, like a square drill
+      const facet = (pts: number[][], fill: string) => {
+        ctx.beginPath();
+        pts.forEach(([a, b], i) => (i ? ctx.lineTo(a, b) : ctx.moveTo(a, b)));
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+      };
+      facet([[px, py], [px + s, py], [cx, cy]], light(hex, 0.34));
+      facet([[px, py], [cx, cy], [px, py + s]], light(hex, 0.14));
+      facet([[px + s, py], [px + s, py + s], [cx, cy]], dark(hex, 0.14));
+      facet([[px, py + s], [px + s, py + s], [cx, cy]], dark(hex, 0.26));
+      ctx.fillStyle = hex;
+      ctx.fillRect(px + inset, py + inset, s - inset * 2, s - inset * 2);
+      ctx.fillStyle = light(hex, 0.2);
+      ctx.fillRect(px + inset, py + inset, (s - inset * 2) * 0.55, (s - inset * 2) * 0.55);
+      ctx.restore();
+      // tiny gleam
+      ctx.fillStyle = 'rgb(255 255 255 / 0.9)';
+      ctx.beginPath();
+      ctx.arc(px + s * 0.27, py + s * 0.27, Math.max(0.8, cell * 0.06), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawSpark(sp: Spark, now: number) {
+      const age = now - sp.t0 - sp.delay;
+      const life = sp.big ? 620 : 420;
+      if (age < 0 || age > life) return;
+      const t = age / life;
+      const cx = sp.x * cell + cell / 2;
+      const cy = sp.y * cell + cell / 2;
+      const r = cell * (sp.big ? 1.5 : 1.05) * Math.sin(Math.min(1, t * 1.4) * Math.PI * 0.5) * (1 - t * 0.35);
+      ctx.save();
+      ctx.globalAlpha = (1 - t) * 0.95;
+      ctx.fillStyle = '#fffbe0';
+      ctx.translate(cx, cy);
+      ctx.rotate(t * 0.8);
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        const rr = i % 2 === 0 ? r : r * 0.22;
+        ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function draw() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size, size);
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          if (!isPaint(x, y)) {
+            ctx.fillStyle = 'rgb(255 255 255 / 0.07)';
+            ctx.beginPath();
+            ctx.arc(x * cell + cell / 2, y * cell + cell / 2, Math.max(0.6, cell * 0.05), 0, Math.PI * 2);
+            ctx.fill();
+          } else if (placed[y][x]) {
+            drawGem(x, y, byKey[cellKey(x, y)].hex);
+          } else {
+            drawTile(x, y);
+          }
+        }
+      }
+      if (showFocus) {
+        ctx.strokeStyle = '#ede288';
+        ctx.lineWidth = 2;
+        round(focus.x * cell + 0.5, focus.y * cell + 0.5, cell - 1, cell - 1, cell * 0.25);
+        ctx.stroke();
+      }
+      const now = performance.now();
+      for (const sp of sparks) drawSpark(sp, now);
+    }
+
+    function tick() {
+      raf = 0;
+      const now = performance.now();
+      sparks = sparks.filter((s) => now - s.t0 - s.delay < (s.big ? 620 : 420));
+      draw();
+      if (sparks.length) raf = requestAnimationFrame(tick);
+    }
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    /* ---------- sound (synthesized, no files) ---------- */
+    let audio: AudioContext | null = null;
+    let soundOn = true;
+    try {
+      soundOn = localStorage.getItem('dp-sound') !== 'off';
+    } catch {}
+    const ac = () => {
+      if (!audio) {
+        const AC = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AC) return null;
+        audio = new AC();
+      }
+      if (audio.state === 'suspended') audio.resume();
+      return audio;
+    };
+    function noiseBuffer(a: AudioContext) {
+      const len = Math.floor(a.sampleRate * 0.03);
+      const buf = a.createBuffer(1, len, a.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      return buf;
+    }
+    // The satisfying part: a crisp "tick" plus a tiny hollow knock, a little higher with every diamond in a row.
+    function click(pitch = 1, when = 0) {
+      if (!soundOn) return;
+      const a = ac();
+      if (!a) return;
+      const t = a.currentTime + when;
+      const out = a.createGain();
+      out.gain.value = 0.9;
+      out.connect(a.destination);
+
+      const n = a.createBufferSource();
+      n.buffer = noiseBuffer(a);
+      const bp = a.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 3600 * pitch;
+      bp.Q.value = 1.1;
+      const ng = a.createGain();
+      ng.gain.setValueAtTime(0.55, t);
+      ng.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+      n.connect(bp).connect(ng).connect(out);
+      n.start(t);
+
+      const o = a.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(2100 * pitch, t);
+      o.frequency.exponentialRampToValueAtTime(950 * pitch, t + 0.05);
+      const og = a.createGain();
+      og.gain.setValueAtTime(0.2, t);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      o.connect(og).connect(out);
+      o.start(t);
+      o.stop(t + 0.09);
+
+      const k = a.createOscillator();
+      k.type = 'triangle';
+      k.frequency.setValueAtTime(240 * pitch, t);
+      k.frequency.exponentialRampToValueAtTime(120 * pitch, t + 0.05);
+      const kg = a.createGain();
+      kg.gain.setValueAtTime(0.14, t);
+      kg.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      k.connect(kg).connect(out);
+      k.start(t);
+      k.stop(t + 0.08);
+    }
+    function thud() {
+      if (!soundOn) return;
+      const a = ac();
+      if (!a) return;
+      const t = a.currentTime;
+      const o = a.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(210, t);
+      o.frequency.exponentialRampToValueAtTime(150, t + 0.08);
+      const g = a.createGain();
+      g.gain.setValueAtTime(0.09, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 0.12);
+    }
+    function chime(freqs: number[], gap = 0.09, vol = 0.12) {
+      if (!soundOn) return;
+      const a = ac();
+      if (!a) return;
+      freqs.forEach((f, i) => {
+        const t = a.currentTime + i * gap;
+        for (const [mul, v] of [[1, vol], [2, vol * 0.25]] as const) {
+          const o = a.createOscillator();
+          o.type = 'sine';
+          o.frequency.value = f * mul;
+          const g = a.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(v, t + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+          o.connect(g).connect(a.destination);
+          o.start(t);
+          o.stop(t + 1);
+        }
+      });
+    }
+
+    /* ---------- game logic ---------- */
+    let combo = 0;
+    function refreshUI(announce = '') {
+      countEl.textContent = `${placedCount} of ${total} placed`;
+      fillEl.style.width = `${(placedCount / total) * 100}%`;
+      for (const b of swatches) {
+        const k = b.dataset.key!;
+        b.setAttribute('aria-pressed', String(k === selected));
+        b.dataset.done = String(left[k] === 0);
+        root.querySelector<HTMLElement>(`[data-left="${k}"]`)!.textContent = String(left[k]);
+      }
+      card.dataset.done = String(placedCount === total);
+      if (announce) statusEl.textContent = announce;
+    }
+
+    function select(key: string) {
+      selected = key;
+      refreshUI();
+      draw();
+    }
+
+    function nextColour() {
+      const open = colors.find((c) => left[c.key] > 0);
+      if (open) select(open.key);
+    }
+
+    function place(x: number, y: number, delay = 0, pitch = 1) {
+      placed[y][x] = true;
+      const k = cellKey(x, y);
+      left[k]--;
+      placedCount++;
+      click(pitch, delay);
+      if (!reduceMotion.matches) {
+        sparks.push({ x, y, t0: performance.now(), delay: delay * 1000, big: false, hex: byKey[k].hex });
+      }
+      if (left[k] === 0 && placedCount < total) {
+        chime([1318.5, 1760], 0.1, 0.1);
+        refreshUI(`${byKey[k].name} is finished.`);
+        nextColour();
+      } else if (placedCount === total) {
+        celebrate();
+      }
+    }
+
+    function celebrate() {
+      refreshUI('The orchid is finished. Lovely.');
+      chime([1046.5, 1318.5, 1568, 2093], 0.12, 0.13);
+      if (!reduceMotion.matches) {
+        const now = performance.now();
+        for (let y = 0; y < N; y++)
+          for (let x = 0; x < N; x++)
+            if (isPaint(x, y) && (x + y) % 3 === 0) {
+              sparks.push({ x, y, t0: now, delay: (x + y) * 22, big: true, hex: '#fffbe0' });
+            }
+      }
+    }
+
+    function tryCell(x: number, y: number, first: boolean, queueIndex: number) {
+      if (x < 0 || y < 0 || x >= N || y >= N || !isPaint(x, y) || placed[y][x]) return false;
+      if (cellKey(x, y) === selected) {
+        combo++;
+        place(x, y, queueIndex * 0.022, 1 + Math.min(combo, 18) * 0.022);
+        return true;
+      }
+      if (first) {
+        thud();
+        const b = swatches.find((s) => s.dataset.key === cellKey(x, y));
+        if (b) {
+          b.dataset.hint = 'true';
+          setTimeout(() => delete b.dataset.hint, 1500);
+        }
+      }
+      return false;
+    }
+
+    function cellAt(e: PointerEvent) {
+      const r = canvas.getBoundingClientRect();
+      return { x: Math.floor(((e.clientX - r.left) / r.width) * N), y: Math.floor(((e.clientY - r.top) / r.height) * N) };
+    }
+    function line(a: { x: number; y: number }, b: { x: number; y: number }) {
+      const pts: { x: number; y: number }[] = [];
+      const n = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+      for (let i = 1; i <= n; i++) {
+        pts.push({ x: Math.round(a.x + ((b.x - a.x) * i) / n), y: Math.round(a.y + ((b.y - a.y) * i) / n) });
+      }
+      return pts;
+    }
+
+    let down = false;
+    let last = { x: -1, y: -1 };
+    canvas.addEventListener('pointerdown', (e) => {
+      canvas.setPointerCapture(e.pointerId);
+      down = true;
+      combo = 0;
+      showFocus = false;
+      const c = cellAt(e);
+      last = c;
+      if (tryCell(c.x, c.y, true, 0)) {
+        save();
+        refreshUI();
+      }
+      draw();
+      kick();
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const c = cellAt(e);
+      if (c.x === last.x && c.y === last.y) return;
+      const path = last.x < 0 ? [c] : line(last, c);
+      let q = 0;
+      let any = false;
+      for (const p of path) {
+        if (tryCell(p.x, p.y, false, q)) {
+          q++;
+          any = true;
+        }
+      }
+      last = c;
+      if (any) {
+        save();
+        refreshUI();
+        draw();
+        kick();
+      }
+    });
+    const up = () => {
+      down = false;
+      combo = 0;
+    };
+    canvas.addEventListener('pointerup', up);
+    canvas.addEventListener('pointercancel', up);
+
+    // keyboard: arrows to move, space/enter to place, 1-5 to pick a colour
+    canvas.addEventListener('keydown', (e) => {
+      const move: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+      if (move[e.key]) {
+        e.preventDefault();
+        focus = { x: Math.min(N - 1, Math.max(0, focus.x + move[e.key][0])), y: Math.min(N - 1, Math.max(0, focus.y + move[e.key][1])) };
+        showFocus = true;
+        draw();
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        showFocus = true;
+        combo = 0;
+        if (tryCell(focus.x, focus.y, true, 0)) {
+          save();
+          refreshUI();
+        }
+        draw();
+        kick();
+      } else if (/^[1-5]$/.test(e.key)) {
+        const c = colors.find((c) => String(c.n) === e.key);
+        if (c) select(c.key);
+      }
+    });
+    canvas.addEventListener('focus', () => {
+      showFocus = true;
+      draw();
+    });
+    canvas.addEventListener('blur', () => {
+      showFocus = false;
+      draw();
+    });
+
+    for (const b of swatches) b.addEventListener('click', () => select(b.dataset.key!));
+
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    soundBtn.textContent = soundOn ? 'Sound on' : 'Sound off';
+    soundBtn.addEventListener('click', () => {
+      soundOn = !soundOn;
+      soundBtn.setAttribute('aria-pressed', String(soundOn));
+      soundBtn.textContent = soundOn ? 'Sound on' : 'Sound off';
+      try {
+        localStorage.setItem('dp-sound', soundOn ? 'on' : 'off');
+      } catch {}
+      if (soundOn) click(1);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      for (const row of placed) row.fill(false);
+      placedCount = 0;
+      for (const c of colors) left[c.key] = totals[c.key];
+      sparks = [];
+      selected = colors[0].key;
+      try {
+        localStorage.removeItem(STORE);
+      } catch {}
+      refreshUI('Started over.');
+      draw();
+    });
+
+    load();
+    const first = colors.find((c) => left[c.key] > 0);
+    if (first) selected = first.key;
+    refreshUI();
+    layout();
+    new ResizeObserver(layout).observe(canvas);
+    document.fonts?.ready.then(draw);
+  }
+</script>
