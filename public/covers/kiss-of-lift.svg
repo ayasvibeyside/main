@@ -66,9 +66,9 @@
     <text x="422" y="604" font-size="13" font-weight="600" fill="#a39b98">Reps</text>
     <rect x="278" y="612" width="112" height="76" rx="18" fill="#0d0b0b" stroke="#dff747" stroke-width="2.6"/>
     <g text-anchor="middle">
-      <text x="334" y="631" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">57.5</text>
-      <text x="334" y="662" font-size="34" font-weight="700" fill="#fff" letter-spacing="-.5">60.0</text>
-      <text x="334" y="681" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">62.5</text>
+      <text x="334" y="631" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">77.5</text>
+      <text x="334" y="662" font-size="34" font-weight="700" fill="#fff" letter-spacing="-.5">80.0</text>
+      <text x="334" y="681" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">82.5</text>
     </g>
     <rect x="410" y="612" width="112" height="76" rx="18" fill="#0d0b0b" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
     <g text-anchor="middle">
@@ -80,7 +80,7 @@
     <rect x="338" y="598" width="48" height="20" rx="10" fill="#dff747"/>
     <text x="362" y="612.5" font-size="13" font-weight="800" fill="#181413" text-anchor="middle">+2.5</text>
 
-    <text x="400" y="712" font-size="14" font-weight="500" fill="#a39b98" text-anchor="middle">Last week 57.5 kg × 8</text>
+    <text x="400" y="712" font-size="14" font-weight="500" fill="#a39b98" text-anchor="middle">Last week 77.5 kg × 8</text>
 
     <!-- controls -->
     <circle cx="302" cy="752" r="21" fill="#2a2525"/>
