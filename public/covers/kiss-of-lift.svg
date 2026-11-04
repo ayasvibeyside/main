@@ -29,10 +29,19 @@
   <g mask="url(#mTop)"><g clip-path="url(#strapT)"><rect x="300" y="150" width="200" height="330" fill="#171313"/><use href="#holo" transform="translate(240 90) scale(1.2 1.25)" filter="url(#pop)"/></g></g>
   <g mask="url(#mBot)"><g clip-path="url(#strapB)"><rect x="300" y="790" width="200" height="210" fill="#171313"/><use href="#holo" transform="translate(240 700) scale(1.2 1.1)" filter="url(#pop)"/></g></g>
 
+  <!-- strap edges and sizing holes -->
+  <g fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="1.5"><path d="M300 200 V430 M500 200 V430" mask="url(#mTop)"/><path d="M300 832 V930 M500 832 V930" mask="url(#mBot)"/></g>
+  <g fill="#0b0909" opacity=".75" mask="url(#mBot)"><circle cx="400" cy="860" r="7"/><circle cx="400" cy="892" r="7"/><circle cx="400" cy="924" r="7"/></g>
+
   <!-- watch case -->
   <g filter="url(#shadow)">
-    <rect x="522" y="560" width="22" height="82" rx="11" fill="#2a2525"/>
-    <rect x="530" y="660" width="14" height="52" rx="7" fill="#2a2525"/>
+    <rect x="552" y="548" width="26" height="84" rx="10" fill="#3b3434"/>
+    <g stroke="#0f0c0c" stroke-width="2" opacity=".7"><path d="M556 560 H576 M556 570 H576 M556 580 H576 M556 590 H576 M556 600 H576 M556 610 H576 M556 620 H576"/></g>
+    <rect x="552" y="548" width="26" height="84" rx="10" fill="none" stroke="url(#rim)" stroke-width="1.6" opacity=".7"/>
+    <rect x="554" y="656" width="14" height="58" rx="6" fill="#322b2b"/>
+    <!-- lugs where the strap meets the case -->
+    <rect x="288" y="418" width="224" height="46" rx="14" fill="#2b2525"/>
+    <rect x="288" y="790" width="224" height="46" rx="14" fill="#2b2525"/>
     <rect x="240" y="436" width="320" height="382" rx="84" fill="url(#case)"/>
   </g>
   <rect x="240.8" y="436.8" width="318.4" height="380.4" rx="83" fill="none" stroke="url(#rim)" stroke-width="2.4" opacity=".85"/>
@@ -41,45 +50,43 @@
   <!-- screen -->
   <g clip-path="url(#screen)" font-family="-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif">
     <ellipse cx="400" cy="800" rx="170" ry="110" fill="#3ae2e4" opacity=".16" filter="url(#glow)"/>
-    <!-- top row: back, clock, heart rate from the wearable -->
-    <circle cx="296" cy="490" r="17" fill="#17383b"/>
-    <path d="M300 482 L292 490 L300 498" fill="none" stroke="#3ae2e4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="516" y="497" font-size="19" font-weight="700" fill="#f4f0ee" text-anchor="end">10:09</text>
-    <path transform="translate(-24 0)" d="M491 513 c-6 -5 -9 -8 -9 -12 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 c0 4 -3 7 -9 12z" fill="#ff3d86"/>
-    <text x="516" y="518" font-size="17" font-weight="700" fill="#ff3d86" text-anchor="end">136</text>
+    <!-- status row: back | heart rate | clock (one baseline, 16px side margins) -->
+    <circle cx="296" cy="494" r="16" fill="#17383b"/>
+    <path d="M300 486 L292 494 L300 502" fill="none" stroke="#3ae2e4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path transform="translate(-24 0)" d="M436 502 c-6 -5 -9 -8 -9 -12 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 c0 4 -3 7 -9 12z" fill="#ff3d86"/>
+    <text x="426" y="501" font-size="17" font-weight="700" fill="#ff3d86">136</text>
+    <text x="522" y="501" font-size="18" font-weight="700" fill="#f4f0ee" text-anchor="end">10:09</text>
 
     <!-- exercise and set -->
-    <text x="278" y="556" font-size="27" font-weight="700" fill="#ffffff" letter-spacing="-.4">Hip thrust</text>
-    <text x="278" y="580" font-size="19" font-weight="500" fill="#a39b98">Set 3 of 4</text>
+    <text x="278" y="552" font-size="26" font-weight="700" fill="#ffffff" letter-spacing="-.4">Hip thrust</text>
+    <text x="278" y="575" font-size="17" font-weight="500" fill="#a39b98">Set 3 of 4</text>
 
-    <!-- kg and reps steppers -->
-    <text x="334" y="605" font-size="13" font-weight="600" fill="#a39b98" text-anchor="middle">Kg</text>
-    <text x="466" y="605" font-size="13" font-weight="600" fill="#a39b98" text-anchor="middle">Reps</text>
-    <clipPath id="kgBox"><rect x="276" y="612" width="116" height="74" rx="18"/></clipPath>
-    <clipPath id="repBox"><rect x="408" y="612" width="116" height="74" rx="18"/></clipPath>
-    <rect x="276" y="612" width="116" height="74" rx="18" fill="#0d0b0b" stroke="#dff747" stroke-width="2.6"/>
-    <g clip-path="url(#kgBox)" text-anchor="middle">
-      <text x="334" y="632" font-size="20" font-weight="600" fill="#fff" fill-opacity=".28">57.5</text>
-      <text x="334" y="665" font-size="37" font-weight="700" fill="#fff" letter-spacing="-.5">60.0</text>
-      <text x="334" y="690" font-size="20" font-weight="600" fill="#fff" fill-opacity=".28">62.5</text>
+    <!-- kg and reps steppers: labels above, wheel values inside, nothing clipped -->
+    <text x="290" y="604" font-size="13" font-weight="600" fill="#a39b98">Kg</text>
+    <text x="422" y="604" font-size="13" font-weight="600" fill="#a39b98">Reps</text>
+    <rect x="278" y="612" width="112" height="76" rx="18" fill="#0d0b0b" stroke="#dff747" stroke-width="2.6"/>
+    <g text-anchor="middle">
+      <text x="334" y="631" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">57.5</text>
+      <text x="334" y="662" font-size="34" font-weight="700" fill="#fff" letter-spacing="-.5">60.0</text>
+      <text x="334" y="681" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">62.5</text>
     </g>
-    <rect x="408" y="612" width="116" height="74" rx="18" fill="#0d0b0b" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
-    <g clip-path="url(#repBox)" text-anchor="middle">
-      <text x="466" y="632" font-size="20" font-weight="600" fill="#fff" fill-opacity=".28">7</text>
-      <text x="466" y="665" font-size="37" font-weight="700" fill="#fff" letter-spacing="-.5">8</text>
-      <text x="466" y="690" font-size="20" font-weight="600" fill="#fff" fill-opacity=".28">9</text>
+    <rect x="410" y="612" width="112" height="76" rx="18" fill="#0d0b0b" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+    <g text-anchor="middle">
+      <text x="466" y="631" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">7</text>
+      <text x="466" y="662" font-size="34" font-weight="700" fill="#fff" letter-spacing="-.5">8</text>
+      <text x="466" y="681" font-size="15" font-weight="600" fill="#fff" fill-opacity=".3">9</text>
     </g>
-    <!-- progressive overload suggestion -->
-    <rect x="356" y="596" width="52" height="22" rx="11" fill="#dff747"/>
-    <text x="382" y="612" font-size="14" font-weight="800" fill="#181413" text-anchor="middle">+2.5</text>
+    <!-- progressive overload suggestion, pinned to the top-right of the kg field -->
+    <rect x="338" y="598" width="48" height="20" rx="10" fill="#dff747"/>
+    <text x="362" y="612.5" font-size="13" font-weight="800" fill="#181413" text-anchor="middle">+2.5</text>
 
-    <text x="400" y="712" font-size="15" font-weight="500" fill="#a39b98" text-anchor="middle">Last week 57.5 kg × 8</text>
+    <text x="400" y="712" font-size="14" font-weight="500" fill="#a39b98" text-anchor="middle">Last week 57.5 kg × 8</text>
 
     <!-- controls -->
     <circle cx="302" cy="752" r="21" fill="#2a2525"/>
     <path d="M307 743 L298 752 L307 761" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="344" y="728" width="112" height="48" rx="24" fill="#e3106a"/>
-    <path d="M382 752 l12 12 l24 -26" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" transform="translate(-8 0) scale(.92) translate(30 62)"/>
+    <path d="M375 752 l10 10 l20 -22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" transform="translate(10 0)"/>
     <circle cx="498" cy="752" r="21" fill="#2a2525"/>
     <path d="M493 743 L502 752 L493 761" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
