@@ -6,19 +6,20 @@
   Calm, low-contrast surfaces with one deep ink colour for text.
 */
 @theme {
-  --color-paper: #edf0ec;      /* page background, a cool sage-grey */
-  --color-surface: #f8f9f6;    /* card surface */
-  --color-ink: #1d2622;        /* body text, deep green-black */
-  --color-ink-soft: #56625c;   /* secondary text */
-  --color-line: #d5dbd4;       /* hairlines and borders */
-  --color-dusk: #4f6185;       /* the one accent: links, focus */
+  /* Wild orchid test palette: #EDE288 yellow, #771441 plum, #DAA43C mustard, #E5D5E1 lilac */
+  --color-paper: #e5d5e1;      /* page background, soft lilac */
+  --color-surface: #f2e9ef;    /* card surface, a lighter lilac */
+  --color-ink: #4a0d28;        /* body text, deep plum */
+  --color-ink-soft: #80405f;   /* secondary text */
+  --color-line: #cdb6c8;       /* hairlines and borders */
+  --color-dusk: #771441;       /* the one accent: links, focus (plum) */
 
   /* Card tints for case studies on the board */
-  --color-tint-mist: #e3e8e6;
-  --color-tint-sage: #cfdccb;
-  --color-tint-dusk: #d6dcea;
-  --color-tint-clay: #e9ddd3;
-  --color-tint-slate: #2c3a40;
+  --color-tint-mist: #e5d5e1;  /* lilac */
+  --color-tint-sage: #ede288;  /* yellow */
+  --color-tint-dusk: #d9c3d4;  /* deeper lilac */
+  --color-tint-clay: #daa43c;  /* mustard */
+  --color-tint-slate: #771441; /* plum */
   --color-tint-noir: #181413;  /* Kiss of Lift: its own neon-on-black brand */
 
   --font-serif: 'Newsreader Variable', ui-serif, Georgia, serif;
