@@ -35,11 +35,11 @@ const pattern = [
 
 // Gem colours, numbered like the key on a real diamond painting kit.
 const colors = [
-  { key: 'Y', n: 1, name: 'Yellow', hex: '#ede288' },
-  { key: 'L', n: 2, name: 'Pale yellow', hex: '#f8f2be' },
-  { key: 'M', n: 3, name: 'Mustard', hex: '#daa43c' },
-  { key: 'P', n: 4, name: 'Plum', hex: '#a12b63' },
-  { key: 'K', n: 5, name: 'Lilac', hex: '#e5d5e1' },
+  { key: 'Y', n: 1, name: 'Peach', hex: '#ffda8f' },
+  { key: 'L', n: 2, name: 'Cream', hex: '#ffefc6' },
+  { key: 'M', n: 3, name: 'Pink', hex: '#ea9dc9' },
+  { key: 'P', n: 4, name: 'Berry', hex: '#b02a48' },
+  { key: 'K', n: 5, name: 'Lime', hex: '#c3cb68' },
 ];
 
 const total = pattern.join('').replace(/\./g, '').length;
@@ -99,7 +99,7 @@ const counts = Object.fromEntries(
     width: min(100%, calc(var(--s) + 7rem));
     margin-left: auto;
     background: var(--color-night);
-    color: #f2e9ef;
+    color: #fff1d6;
     border-radius: 28px;
     padding: 1.5rem 3.5rem 1.4rem;
     box-shadow: 0 30px 60px -30px rgb(42 8 23 / 0.7);
@@ -112,7 +112,7 @@ const counts = Object.fromEntries(
   .dp-hint {
     margin-top: 0.4rem;
     font-size: 0.92rem;
-    color: #d9c3d4;
+    color: #ecd0b9;
   }
   /* The canvas is sized by the screen height, so the whole card fits above the fold. */
   .dp-canvas {
@@ -121,7 +121,7 @@ const counts = Object.fromEntries(
     aspect-ratio: 1;
     margin: 1.1rem 0 0;
     border-radius: 18px;
-    background: #1f0612;
+    background: #26040b;
     touch-action: none;
     cursor: pointer;
     outline-offset: 3px;
@@ -165,7 +165,7 @@ const counts = Object.fromEntries(
   }
   .dp-meta { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
   .dp-num { font-size: 0.78rem; font-weight: 600; }
-  .dp-left { font-size: 0.68rem; color: #d9c3d4; font-variant-numeric: tabular-nums; }
+  .dp-left { font-size: 0.68rem; color: #ecd0b9; font-variant-numeric: tabular-nums; }
   .dp-foot {
     display: flex;
     flex-wrap: wrap;
@@ -174,9 +174,9 @@ const counts = Object.fromEntries(
     gap: 0.75rem;
     margin-top: 1.1rem;
   }
-  .dp-progress { flex: 1; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #d9c3d4; }
+  .dp-progress { flex: 1; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #ecd0b9; }
   .dp-bar { flex: 1; min-width: 4rem; height: 5px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
-  .dp-fill { display: block; height: 100%; width: 0; background: #ede288; border-radius: inherit; transition: width 250ms ease-out; }
+  .dp-fill { display: block; height: 100%; width: 0; background: #ffda8f; border-radius: inherit; transition: width 250ms ease-out; }
   .dp-count { font-variant-numeric: tabular-nums; }
   .dp-actions { display: flex; gap: 0.4rem; }
   .dp-btn {
@@ -184,16 +184,16 @@ const counts = Object.fromEntries(
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.1);
-    color: #f2e9ef;
+    color: #fff1d6;
     cursor: pointer;
     transition: background 150ms;
   }
   .dp-btn:hover { background: rgb(255 255 255 / 0.18); }
-  .dp-btn[aria-pressed='false'] { color: #b79aac; text-decoration: line-through; }
+  .dp-btn[aria-pressed='false'] { color: #c9a196; text-decoration: line-through; }
   @media (max-width: 767px) {
     .dp-card { width: 100%; padding: 1.25rem; }
   }
-  .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ede288; }
+  .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ffda8f; }
   /* visually hidden iOS "switch" used only to trigger a haptic tick on iPhone */
   .dp-haptic { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; pointer-events: none; }
   @keyframes dp-hint {
@@ -393,7 +393,7 @@ const counts = Object.fromEntries(
         }
       }
       if (showFocus) {
-        ctx.strokeStyle = '#ede288';
+        ctx.strokeStyle = '#ffda8f';
         ctx.lineWidth = 2;
         round(focus.x * cell + 0.5, focus.y * cell + 0.5, cell - 1, cell - 1, cell * 0.25);
         ctx.stroke();
