@@ -8,7 +8,7 @@ export const site = {
     'Product designer moving into product management. Case studies on trading and learning products.',
   email: 'afouadaly@gmail.com',
   linkedin: 'https://www.linkedin.com/in/afouadaly/',
-  resume: 'https://drive.google.com/file/d/1K8dHUSHhN6WCpn-N_Vc6FnCYwYHM6KpV/view',
+  resume: '/resume.pdf',
   // Optional: paste your Cal.com link to show a "Book a call" button
   cal: '',
 };
