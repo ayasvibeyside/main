@@ -471,45 +471,31 @@ const counts = Object.fromEntries(
       n.start(t, Math.random() * 0.1);
       n.stop(t + len + 0.02);
     }
-    // A gem seating on its adhesive: a soft "thock", a dry click, and a faint glassy tink.
+    // A gem seating on its adhesive: a tight, dry tap plus a faint glassy tink. There is deliberately
+    // no gliding low tone here (stacked up in a drag, those sound like a rumble). Everything is a short,
+    // unpitched burst, and bursts are spaced and capped so a fast drag stays a clean, light patter.
+    let lastT = 0;
     function playPlace(when = 0, strength = 1) {
       if (!soundOn) return;
       const a = ac();
       if (!a || !bus) return;
-      const t = a.currentTime + when;
-      const r = rand(0.9, 1.1); // never exactly the same twice, and never a note
-      const body = a.createOscillator();
-      body.type = 'sine';
-      body.frequency.setValueAtTime(210 * r, t);
-      body.frequency.exponentialRampToValueAtTime(95 * r, t + 0.045);
-      const bg = a.createGain();
-      bg.gain.setValueAtTime(0.0001, t);
-      bg.gain.exponentialRampToValueAtTime(0.2 * strength, t + 0.004);
-      bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-      body.connect(bg).connect(bus);
-      body.start(t);
-      body.stop(t + 0.12);
-      burst(a, t, 2300 * r, 0.9, 0.34 * strength, 0.03); // the dry click
-      burst(a, t + 0.004, rand(6200, 8200), 6, 0.1 * strength, 0.07); // the glassy tink
+      let t = a.currentTime + when;
+      t = Math.max(t, lastT + 0.034); // keep taps apart
+      if (t - a.currentTime > 0.3) return; // never let a long drag queue up a backlog
+      lastT = t;
+      const r = rand(0.92, 1.08);
+      burst(a, t, 1100 * r, 1.1, 0.32 * strength, 0.022); // soft body of the tap
+      burst(a, t, 2600 * r, 1.0, 0.42 * strength, 0.016); // the dry click
+      burst(a, t + 0.003, rand(6400, 8600), 6, 0.11 * strength, 0.06); // the glassy tink
     }
-    // Wrong colour: a dull, soft bump.
+    // Wrong colour: a dull little tap (no pitch, no rumble).
     function thud() {
       if (!soundOn) return;
       const a = ac();
       if (!a || !bus) return;
       const t = a.currentTime;
-      const o = a.createOscillator();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(120, t);
-      o.frequency.exponentialRampToValueAtTime(70, t + 0.1);
-      const g = a.createGain();
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.16, t + 0.008);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-      o.connect(g).connect(bus);
-      o.start(t);
-      o.stop(t + 0.2);
-      burst(a, t, 500, 0.7, 0.12, 0.05);
+      burst(a, t, 420, 0.8, 0.28, 0.07);
+      burst(a, t, 900, 0.8, 0.12, 0.04);
     }
     // A shimmer of little glass tinks, like a handful of gems settling.
     function shimmer(count: number, gap: number, vol: number) {
@@ -568,7 +554,7 @@ const counts = Object.fromEntries(
       const k = cellKey(x, y);
       left[k]--;
       placedCount++;
-      playPlace(delay);
+      playPlace(delay, combo > 1 ? 0.8 : 1);
       haptic(7);
       if (!reduceMotion.matches) {
         sparks.push({ x, y, t0: performance.now(), delay: delay * 1000, big: false, hex: byKey[k].hex });
