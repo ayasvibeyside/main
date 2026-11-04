@@ -70,7 +70,7 @@
     <!-- status row: back | clock (heart rate sits beside the exercise name) (one baseline, 16px side margins) -->
     <circle cx="296" cy="494" r="16" fill="#17383b"/>
     <path d="M300 486 L292 494 L300 502" fill="none" stroke="#3ae2e4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path transform="translate(46 49)" d="M436 502 c-6 -5 -9 -8 -9 -12 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 c0 4 -3 7 -9 12z" fill="#ff3d86"/>
+    <path transform="translate(478 545) scale(.88) translate(-436 -494.5)" d="M436 502 c-6 -5 -9 -8 -9 -12 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 c0 4 -3 7 -9 12z" fill="#ff3d86"/>
     <text x="522" y="551" font-size="17" font-weight="700" fill="#ff3d86" text-anchor="end">136</text>
     <text x="522" y="501" font-size="18" font-weight="700" fill="#f4f0ee" text-anchor="end">10:09</text>
 
