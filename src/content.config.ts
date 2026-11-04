@@ -21,8 +21,8 @@ const work = defineCollection({
     links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
     // The headline result. Keep it to a number and a short phrase.
     outcome: z.string().optional(),
-    // Card tint on the home board: mist, sage, dusk, clay or slate
-    tint: z.enum(['mist', 'sage', 'dusk', 'clay', 'slate']).default('mist'),
+    // Card tint on the home board: mist, sage, dusk, clay, slate or noir
+    tint: z.enum(['mist', 'sage', 'dusk', 'clay', 'slate', 'noir']).default('mist'),
     // Optional cover image, e.g. /covers/thndrx.png (put the file in public/covers)
     cover: z.string().optional(),
     coverAlt: z.string().optional(),
