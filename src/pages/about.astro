@@ -24,6 +24,14 @@ const experience = [
   },
 ];
 
+const education = [
+  {
+    when: '2018',
+    what: 'BSc Computer Science and Engineering',
+    where: 'German University in Cairo',
+  },
+];
+
 const skills = [
   {
     title: 'Product design',
@@ -140,6 +148,21 @@ const principles = [
               <span class="text-ink-soft">, {e.where}</span>
             </span>
             <span class="text-ink-soft">{e.note}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="frame mt-24">
+    <h2 class="font-serif text-3xl tracking-tight">Education</h2>
+    <ol class="mt-8 border-t border-line">
+      {
+        education.map((e) => (
+          <li class="grid gap-1 border-b border-line py-5 sm:grid-cols-[13rem_1fr_1.3fr] sm:gap-6">
+            <span class="text-sm text-ink-soft sm:pt-0.5">{e.when}</span>
+            <span class="font-medium">{e.what}</span>
+            <span class="text-ink-soft">{e.where}</span>
           </li>
         ))
       }
