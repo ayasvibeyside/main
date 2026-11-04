@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ThndrX — Aya Fouad</title>
+<meta name="description" content="Case study: turning ThndrX, Thndr's pro trading platform, from an engineer-built beta into a coherent product across web and mobile.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* schematic screens */
+.screen{background:var(--screen);color:var(--screen-ink);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;font:400 12px/1.4 var(--mono)}
+.screen .bar{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--screen-line)}
+.screen .bar i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.14)}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ba .lbl{font:500 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--screen-muted);padding:12px 14px 0}
+.ba .after .lbl{color:var(--up)}
+.schem-note{font:500 10.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+
+/* nav before */
+.topnav{display:flex;align-items:center;gap:14px;padding:14px;margin:14px;border:1px solid var(--screen-line);border-radius:10px;background:var(--screen-2)}
+.topnav .logo{font:600 13px/1 var(--body)}.topnav .beta{font-size:9px;padding:3px 6px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--screen-muted)}
+.topnav .tab{padding:6px 10px;border-radius:999px;color:var(--screen-muted)}
+.topnav .tab.on{background:rgba(255,255,255,.12);color:var(--screen-ink)}
+.mixed{display:flex;gap:10px;margin:0 14px 14px;padding:10px 12px;border:1px dashed var(--screen-line);border-radius:10px;align-items:center;color:var(--screen-muted)}
+.mixed span{width:22px;height:22px;border-radius:6px}
+.m1{background:radial-gradient(circle at 30% 30%,#9cc3ff,#2c5bd6)}.m2{border:1.5px solid #9aa4b2}.m3{background:linear-gradient(135deg,#f6c96b,#c47e17);border-radius:50%!important}.m4{border:1.5px solid #9aa4b2;border-radius:50%!important}
+/* nav after */
+.rail-wrap{display:flex;gap:12px;padding:14px;align-items:stretch;min-height:150px}
+.rail{display:flex;flex-direction:column;gap:12px;padding:12px 10px;background:var(--screen-2);border-radius:12px;border:1px solid var(--screen-line)}
+.rail svg{width:20px;height:20px;stroke:var(--screen-muted);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rail .on svg{stroke:var(--up)}
+.rail-wrap .content{flex:1;border-radius:12px;border:1px dashed var(--screen-line);display:grid;place-items:center;color:var(--screen-muted);font-size:11px;text-align:center;padding:10px}
+
+/* widgets */
+.float{position:relative;height:230px;margin:14px}
+.w{position:absolute;background:var(--screen-2);border:1px solid var(--screen-line);border-radius:8px;padding:8px;color:var(--screen-muted);font-size:10.5px;box-shadow:0 10px 24px -10px rgba(0,0,0,.6)}
+.w b{display:block;color:var(--screen-ink);font-weight:500;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:1.1fr 2fr 1.1fr;grid-template-rows:1fr .7fr;gap:6px;height:230px;margin:14px}
+.g{background:var(--screen-2);border:1px solid var(--screen-line);border-radius:8px;padding:8px;color:var(--screen-muted);font-size:10.5px;position:relative;overflow:hidden}
+.g b{display:block;color:var(--screen-ink);font-weight:500;margin-bottom:4px}
+.g.chart svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:70%}
+.g.pad{grid-row:1 / span 2;grid-column:3}
+.g.chart{grid-column:2}.g.pos{grid-column:1 / span 2}
+.snap{position:absolute;right:6px;bottom:6px;width:8px;height:8px;border-right:1.5px solid var(--up);border-bottom:1.5px solid var(--up)}
+
+/* market strip */
+.strip{display:flex;gap:22px;overflow-x:auto;padding:14px 16px;white-space:nowrap;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip div{display:flex;flex-direction:column;gap:3px}
+.strip small{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--screen-muted)}
+.strip b{font-weight:500;font-size:13px}
+.up{color:var(--up)}.dn{color:var(--down)}
+
+/* order pad */
+.pad-demo{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:28px;align-items:start}
+.opad{padding:16px;display:flex;flex-direction:column;gap:12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--screen-2);border-radius:10px;padding:3px}
+.seg span{text-align:center;padding:8px;border-radius:8px;color:var(--screen-muted)}
+.seg .buy{background:var(--up);color:#0B1A12;font-weight:500}
+.types{display:flex;gap:4px;flex-wrap:wrap}
+.types span{padding:6px 8px;border-radius:999px;border:1px solid var(--screen-line);color:var(--screen-muted);font-size:10.5px}
+.types .on{border-color:var(--screen-ink);color:var(--screen-ink)}
+.field{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:8px;background:var(--screen-2)}
+.field small{color:var(--screen-muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.summary{border:1px solid var(--screen-line);border-radius:10px;padding:10px;display:grid;gap:4px}
+.summary div{display:flex;justify-content:space-between}
+.summary small{color:var(--screen-muted)}
+.confirm{text-align:center;padding:10px;border-radius:10px;background:var(--up);color:#0B1A12;font-weight:500}
+.callouts{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.callouts li{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:15px}
+.callouts li b{font:500 12px/28px var(--mono);color:var(--accent);text-align:center;width:28px;height:28px;border-radius:50%;background:var(--card);box-shadow:var(--shadow)}
+.callouts li span{color:var(--muted)}
+.callouts li strong{color:var(--ink);font-weight:500}
+
+.navshots{display:flex;gap:16px;align-items:flex-start;padding:14px;flex-wrap:wrap}
+.navshots img{border-radius:8px;height:auto}
+.navshots img:first-child:not(.rail-img){width:100%;max-width:420px}
+.navshots img.icons{width:56px}
+.navshots img.rail-img{width:40px;margin:0 auto}
+.clip{display:block;width:100%;height:auto;margin-top:12px}
+.stripshot{overflow-x:auto;padding:0;scrollbar-width:thin}
+.stripshot img{height:49px;width:auto;max-width:none;display:block}
+@media (max-width:720px){.ba,.pad-demo{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="/">Aya Fouad</a>
+    <nav aria-label="Case studies"><a href="/">← All work</a><a href="/case-studies/traders/">Traders</a></nav>
+  </header>
+
+  <article class="cs">
+    <section class="cs-hero" style="padding-top:clamp(48px,8vw,96px)">
+      <p class="eyebrow">Case study · Fintech · Thndr</p>
+      <h1>Turning a fast beta into a <em>trader's</em> platform.</h1>
+      <p class="lede">ThndrX is Thndr's paid, desktop-first platform for active traders on the Egyptian Exchange. When I joined, it had been built by engineers moving fast: no Figma file, no design system, no designer. I was its first and only one, working with the product manager, engineering and a group of expert traders to turn it into one coherent product across web and mobile.</p>
+      <dl class="meta">
+        <div><dt>Role</dt><dd>Sole product designer</dd></div>
+        <div><dt>Worked with</dt><dd>PM, engineering, expert traders</dd></div>
+        <div><dt>Platforms</dt><dd>Web (primary), iOS, Android</dd></div>
+        <div><dt>When</dt><dd>Aug 2025 – Feb 2026</dd></div>
+      </dl>
+      <div class="stats">
+        <div class="stat"><b>1</b><span>designer across web, iOS and Android</span></div>
+        <div class="stat"><b>0 → 1</b><span>design system, from tokens to components</span></div>
+        <div class="stat"><b>5.5M+</b><span>users on Thndr, the platform ThndrX is part of</span></div>
+      </div>
+    </section>
+
+    <figure class="wide">
+      <img src="images/thndrx-dashboard.jpg" alt="The redesigned ThndrX web dashboard in Arabic: watchlist, candlestick chart, market depth, order pad and positions in one view, with the side rail and market strip." width="2000" height="1115">
+      <figcaption>ThndrX on the web after the redesign, shown in Arabic (right to left): watchlist, chart, market depth, the order pad and positions in one view, with the side rail and the live market strip.</figcaption>
+    </figure>
+
+    <section>
+      <p class="num">01 — Context</p>
+      <h2>A real product that <em>outgrew</em> its beta.</h2>
+      <p>Thndr is one of Egypt's largest retail investment apps. ThndrX is its professional tier: built for people who trade often and want market depth, advanced order types and speed. It was tested with the market before the company had invested in a design process, so what existed worked, but unevenly. Engineers had been making the design calls, and it showed.</p>
+      <p>My job was to catch the product up to its users, then pull it forward, without breaking anything for traders who had real money moving through it every day.</p>
+    </section>
+
+    <section>
+      <p class="num">02 — What I found</p>
+      <h2>Four problems, <em>one</em> platform.</h2>
+      <p>I started with an audit: every screen on web and mobile, every inconsistency, every flow with no design behind it. Four things stood out.</p>
+      <div class="cards">
+        <div class="card"><h4>The widget layout was broken</h4><p>Panels floated freely, overlapped each other and couldn't be reset or aligned. On a platform built around watching several data views at once, that was the most painful problem.</p></div>
+        <div class="card"><h4>Navigation had no point of view</h4><p>A generic top bar with text tabs (Account, Market, Trading) that could have belonged to any product, and buried the views traders used most.</p></div>
+        <div class="card"><h4>No visual language</h4><p>Inconsistent colour, 3D and flat icons side by side, and a dark mode that wasn't built for reading financial data.</p></div>
+        <div class="card"><h4>Web lagged behind mobile</h4><p>Features and polish that existed on the app were missing on the web, so traders moving between the two hit dead ends.</p></div>
+      </div>
+      <blockquote class="quote">“The floating widgets were an absolute catastrophe. They would overlap each other and you could never reset them or even get them aligned properly.”<small>My audit notes, week one</small></blockquote>
+    </section>
+
+    <section>
+      <p class="num">03 — How I worked</p>
+      <h2>Prioritized with the PM, <em>specified</em> for engineering.</h2>
+      <p>I couldn't fix everything at once, and the instinct in a startup is always to ship features. So the work ran on two tracks: ship what traders needed most, and build the foundation that would stop every new feature from reopening old decisions.</p>
+      <ol class="steps">
+        <li><b>Turned feedback into a queue</b><span>With the PM and a group of expert traders, I turned user feedback logged in Linear into a prioritized list of what to fix and build.</span></li>
+        <li><b>Started with the order pad</b><span>We put the highest-impact flow first: the moment of execution, where speed and clarity cost traders real money if they're wrong.</span></li>
+        <li><b>Made the case for a design system</b><span>I argued for building the system alongside the missing features, as the only designer, instead of after them. Tokens first (colour, type, spacing), then the highest-frequency components.</span></li>
+        <li><b>Specified for engineering</b><span>Each flow went to engineering with its states and edge cases written down, across every order type, time-in-force and execution type.</span></li>
+        <li><b>Shipped and listened</b><span>After each release I followed how traders reacted, and fed it back into the queue.</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <p class="num">04 — Key decisions</p>
+      <h2>The calls that <em>shaped</em> it.</h2>
+      <div class="decision"><span class="dn">01</span><div><h4>Build the system while shipping, not after</h4><p>Without a shared language, every feature would be designed in a vacuum and revisited later. On a trading platform, inconsistency isn't only cosmetic; it erodes trust. Fighting for that time early was the right call: what came after shipped faster and landed consistently on web and mobile.</p><span class="tag">Trade-off · slower first weeks for faster everything after</span></div></div>
+      <div class="decision"><span class="dn">02</span><div><h4>Move navigation from a top bar to a side rail</h4><p>A structural change, not a visual one. A vertical rail freed the full width for the trading view, put navigation where the eye rests in long sessions, and made room for a live market strip across the top. I reordered views by how often traders used them and worked with a graphic designer on a custom icon set to give ThndrX its own identity.</p><span class="tag">One change, three problems</span></div></div>
+      <div class="decision"><span class="dn">03</span><div><h4>Make the required confirmation feel fast</h4><p>Regulation required the price to be shown and an explicit confirmation before any order executes; one-tap trading wasn't an option. Instead of fighting the rule, I designed around it: sensible defaults to cut the decisions per order, and a confirmation summary built to be read at a glance.</p><span class="tag">Constraint as a design input</span></div></div>
+      <div class="decision"><span class="dn">04</span><div><h4>Hold the dark mode change through pushback</h4><p>I rebuilt the dark mode for accessibility, especially on charts. When it shipped alongside a flow change, traders pushed back: it wasn't the app they knew. I read that as a sign of how closely they used the product, not as proof the change was wrong, and I kept it. The lesson I took: for big changes, plan the rollout as carefully as the design.</p><span class="tag">Signal, not rejection</span></div></div>
+    </section>
+
+    <section>
+      <p class="num">05 — The redesign</p>
+      <h2>What changed on <em>screen</em>.</h2>
+      <p>Screens from the live product, before and after. Longer recordings are available on request.</p>
+
+      <h3>From borrowed to bespoke navigation</h3>
+      <figure class="ba navba">
+        <div class="screen"><div class="lbl">Before · top bar and old icon style</div>
+          <div class="navshots"><img src="images/thndrx-nav-before.png" alt="The old ThndrX top bar: text tabs for Account, Market and Trading next to the ThndrX Beta wordmark." width="566" height="74"><img class="icons" src="images/thndrx-icons-before.png" alt="The old icon set: glossy 3D house, bull and globe icons mixed with flat ones." width="94" height="658"></div>
+        </div>
+        <div class="screen after"><div class="lbl">After · custom side rail</div>
+          <div class="navshots"><img class="rail-img" src="images/thndrx-nav-after.png" alt="The new ThndrX side rail with a consistent flat icon set, views at the top and settings and help at the bottom." width="92" height="1622"></div>
+        </div>
+        <figcaption style="grid-column:1/-1">Before: text tabs in a top bar, and glossy 3D icons mixed with flat ones. After: the side rail, ordered by use, with one flat custom icon set and utilities at the bottom.</figcaption>
+      </figure>
+
+      <h3>Widgets that snap into place</h3>
+      <p>The floating panels became a layout that snaps to a grid, resizes cleanly and resets to a sensible default. Watchlist, chart, market depth, positions and the order pad are all visible at once, with no page changes.</p>
+      <figure class="ba">
+        <div class="screen"><div class="lbl">Before · floating, overlapping (simplified)</div>
+          <div class="float" aria-hidden="true">
+            <div class="w" style="left:2%;top:6%;width:44%;height:46%;transform:rotate(-2deg)"><b>Watchlist</b>COMI · ETEL · HRHO</div>
+            <div class="w" style="left:28%;top:24%;width:52%;height:50%;transform:rotate(1.5deg)"><b>Chart</b>overlaps watchlist</div>
+            <div class="w" style="left:60%;top:2%;width:38%;height:40%;transform:rotate(3deg)"><b>Order pad</b>half hidden</div>
+            <div class="w" style="left:8%;top:62%;width:60%;height:34%;transform:rotate(-1deg)"><b>Positions</b>can't reset</div>
+          </div>
+        </div>
+        <div class="screen after"><div class="lbl">After · panels snap and resize</div>
+          <video class="clip" src="images/thndrx-resize.mp4" poster="images/thndrx-resize-poster.jpg" autoplay muted loop playsinline aria-label="Screen recording: a panel being resized and the layout snapping into place."></video>
+        </div>
+      </figure>
+
+      <h3>The market at a glance</h3>
+      <p>I designed a live strip across the top of every view: turnover, volume, number of trades, the EGX 30, advancers against decliners, and the day's top gainer and loser. A trader can read the market without leaving their position.</p>
+      <figure>
+        <div class="screen stripshot" tabindex="0" aria-label="Market strip, scrollable"><img src="images/thndrx-strip.png" alt="The live market strip: EGX turnover, volume, trades, EGX 30, decliners and advancers, top gainer and loser, and the dollar rate." width="2790" height="98"></div>
+        <figcaption>From a live session. Scroll sideways to see the whole strip.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <p class="num">06 — Deep dive</p>
+      <h2>The order pad: speed <em>under</em> rules.</h2>
+      <p>The order pad is where every decision gets stress-tested. A trader picks buy or sell, an order type, a time-in-force, an execution type, a quantity and a price, often within seconds while prices move.</p>
+      <div class="tension">
+        <div><b>Speed</b><span>Prices change in seconds. Every extra step is a risk for the trader.</span></div>
+        <i>vs</i>
+        <div><b>Compliance</b><span>The price must be shown, and every order needs an explicit confirmation.</span></div>
+      </div>
+      <div class="pad-demo">
+        <figure style="margin:0">
+          <div class="screen opad" aria-label="Order pad, schematic">
+            <div class="seg"><span class="buy">Buy</span><span>Sell</span></div>
+            <div class="types"><span class="on">Limit</span><span>Market</span><span>Stop Loss</span><span>Take Profit</span></div>
+            <div class="field"><small>Price (EGP)</small><b>84.20</b></div>
+            <div class="field"><small>Quantity</small><b>500</b></div>
+            <div class="row2"><div class="field"><small>Time in force</small><b>Day</b></div><div class="field"><small>Execution</small><b>Normal</b></div></div>
+            <div class="summary"><div><small>Buy 500 · Limit</small><b>@ 84.20</b></div><div><small>Order value</small><b>42,100 + fees</b></div></div>
+            <div class="confirm">Review &amp; confirm</div>
+          </div>
+          <figcaption>Simplified for legibility; the shipped pad is on the left of the dashboard above.</figcaption>
+        </figure>
+        <ul class="callouts">
+          <li><b>1</b><div><strong>Defaults do the work.</strong> <span>Sensible defaults for time-in-force and execution type cut the number of decisions on a typical order.</span></div></li>
+          <li><b>2</b><div><strong>Price is never hidden.</strong> <span>The price stays visible at every step, as the rules require, and where traders look anyway.</span></div></li>
+          <li><b>3</b><div><strong>Confirmation as a summary.</strong> <span>Not a disruptive modal: a summary built to be read at a glance, so the legal step feels like part of the flow.</span></div></li>
+          <li><b>4</b><div><strong>Always one click away.</strong> <span>The pad lives in a fixed column, so it's reachable from any view.</span></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <p class="num">07 — What shipped</p>
+      <h2>A platform that finally <em>looked</em> like one product.</h2>
+      <div class="cards">
+        <div class="card"><h4>Design system, web and mobile</h4><p>The platform's first: tokens and components that let new features ship faster and consistently.</p></div>
+        <div class="card"><h4>Snapping widget layout</h4><p>Replaced the overlapping floating panels with a grid that resizes and resets.</p></div>
+        <div class="card"><h4>Side rail and icon set</h4><p>A new navigation structure ordered by usage, with a custom icon set.</p></div>
+        <div class="card"><h4>Market strip, order pad, dark mode</h4><p>A live market overview, a faster compliant order pad, and an accessible dark mode for charts and dense data.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="num">08 — Reflections</p>
+      <h2>What I'd do <em>differently</em>.</h2>
+      <div class="learn">
+        <div><h4>Write decisions down as they happen</h4><p>The reasoning behind hard calls lived in my head and in Slack threads. I now treat decision records as part of shipping, not a task for later.</p></div>
+        <div><h4>Plan the rollout with the design</h4><p>The dark mode pushback taught me that traders build deep muscle memory. Big changes need a transition plan, because the users who notice are exactly the ones you want to keep.</p></div>
+        <div><h4>Make the system argument earlier</h4><p>The time spent on foundations paid back on every feature after it. I'd make the same case again, sooner and louder.</p></div>
+      </div>
+    </section>
+
+    <a class="next" href="/case-studies/traders/"><small>Next case study</small><span>Traders →</span></a>
+  </article>
+
+  <footer class="foot">
+    <div><h4>Aya Fouad</h4><p>Product designer moving into product management. Fintech and edtech, Cairo.</p></div>
+    <div><h4>Elsewhere</h4><p><a href="https://www.linkedin.com/in/afouadaly">LinkedIn</a></p><p><a href="https://behance.net/afouadaly">Behance</a></p></div>
+    <div><h4>Contact</h4><div class="mail"><code>afouadaly@gmail.com</code></div></div>
+  </footer>
+</div>
+</body>
+</html>
