@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+
+// Most recent first. This list is a timeline, so it reads top to bottom.
+const experience = [
+  {
+    when: '2026 to now',
+    what: 'Freelance product designer',
+    where: 'Independent',
+    note: 'Product, brand and web work for clients, plus my own product tools.',
+  },
+  {
+    when: 'Aug 2025 to Feb 2026',
+    what: 'Product designer',
+    where: 'Thndr',
+    note: 'ThndrX, the trading platform across the Thndr app and web.',
+  },
+  {
+    when: '2020 to now',
+    what: 'UX designer',
+    where: 'Mirqah Media Lab',
+    note: 'Traders, an educational game that teaches business acumen.',
+  },
+];
+
+const skills = [
+  {
+    title: 'Design',
+    items: ['UX and UI design', 'Interaction and prototyping', 'Design systems', 'Usability research', 'Figma'],
+  },
+  {
+    title: 'Product',
+    items: [
+      'Problem framing',
+      'Activation and funnel thinking',
+      'Small, testable bets',
+      'Prioritisation and roadmapping',
+      'Design and engineering handoff',
+    ],
+  },
+];
+
+const principles = [
+  {
+    title: 'Start with the decision',
+    body: 'Before any screen, I write down the decision a feature should help someone make. If I can’t, we’re not ready to design.',
+  },
+  {
+    title: 'Ship the smallest true version',
+    body: 'A narrow thing that works teaches more than a broad thing that almost does.',
+  },
+  {
+    title: 'Let the numbers argue back',
+    body: 'I set the success measure before launch, so the result can prove me wrong.',
+  },
+];
+---
+
+<Base title="About" description={`About ${site.name}: ${site.role}.`}>
+  <section class="frame grid grid-cols-4 gap-x-6 pt-10 sm:pt-16">
+    <div class="col-span-4 md:col-span-3">
+      <h1 class="settle font-serif text-[2.6rem] font-light leading-[1.08] tracking-[-0.02em] sm:text-[3.6rem]">
+        Hi, I’m {site.firstName}.
+      </h1>
+      <div class="settle mt-8 max-w-[26ch] font-serif text-[1.65rem] font-light leading-[1.3] tracking-[-0.01em] text-ink sm:text-[2.1rem]" style="--i:1">
+        <p>
+          I’m a product designer who enjoys making complex things simple, ideally the kind that
+          teach something and actually move the needle.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="frame mt-24">
+    <h2 class="font-serif text-3xl tracking-tight">How I work</h2>
+    <div class="mt-8 grid gap-5 md:grid-cols-3">
+      {
+        principles.map((p) => (
+          <div class="rounded-[22px] bg-surface p-6">
+            <h3 class="text-lg font-semibold">{p.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink-soft">{p.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="frame mt-24">
+    <h2 class="font-serif text-3xl tracking-tight">What I bring</h2>
+    <div class="mt-8 grid gap-x-6 gap-y-10 border-t border-line pt-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        skills.map((s) => (
+          <div>
+            <h3 class="text-sm text-ink-soft">{s.title}</h3>
+            <ul class="mt-3 space-y-1.5 text-lg">
+              {s.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="frame mt-24">
+    <h2 class="font-serif text-3xl tracking-tight">Experience</h2>
+    <ol class="mt-8 border-t border-line">
+      {
+        experience.map((e) => (
+          <li class="grid gap-1 border-b border-line py-5 sm:grid-cols-[13rem_1fr_1.3fr] sm:gap-6">
+            <span class="text-sm text-ink-soft sm:pt-0.5">{e.when}</span>
+            <span>
+              <span class="font-medium">{e.what}</span>
+              <span class="text-ink-soft">, {e.where}</span>
+            </span>
+            <span class="text-ink-soft">{e.note}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Base>

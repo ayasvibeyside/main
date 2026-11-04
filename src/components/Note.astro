@@ -1,0 +1,41 @@
+---
+// A small note on the board: a thought, a status update or a way to get in touch.
+interface Props {
+  index: number;
+  heading?: string;
+  variant?: 'plain' | 'quote' | 'ink';
+}
+
+const { index, heading, variant = 'plain' } = Astro.props;
+---
+
+<aside
+  class:list={[
+    'h-full rounded-[22px] p-6',
+    variant === 'ink' ? 'bg-ink text-paper' : 'bg-surface',
+    variant === 'quote' && 'border border-line bg-transparent',
+  ]}
+  style={`--i:${index}`}
+>
+  {
+    heading && (
+      <h2
+        class:list={[
+          'mb-2 text-sm font-medium',
+          variant === 'ink' ? 'text-paper/70' : 'text-ink-soft',
+        ]}
+      >
+        {heading}
+      </h2>
+    )
+  }
+  <div
+    class:list={[
+      variant === 'quote'
+        ? 'font-serif text-2xl font-light italic leading-snug'
+        : 'text-[1.05rem] leading-relaxed',
+    ]}
+  >
+    <slot />
+  </div>
+</aside>

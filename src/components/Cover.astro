@@ -1,0 +1,70 @@
+---
+// A project's full-screen colour field with its cover.
+// frame: the image sits in a frame on the right half (or top, on phones).
+// bleed: the image fills the whole area.
+import type { CollectionEntry } from 'astro:content';
+import { tintBg } from '../tints';
+import MarketBreadthCover from './MarketBreadthCover.astro';
+
+interface Props {
+  data: CollectionEntry<'work'>['data'];
+  eager?: boolean;
+  // When set, the cover art links here (used on the home showcase)
+  href?: string;
+}
+
+const { data, eager = false, href } = Astro.props;
+const { tint, cover, coverAlt = '', coverStyle, coverFocus, coverLive } = data;
+const focus = { center: 'object-center', left: 'object-left', right: 'object-right' }[coverFocus];
+const bleed = cover && coverStyle === 'bleed';
+---
+
+<div class:list={['cover absolute inset-0 overflow-hidden', tintBg[tint]]}>
+  {
+    bleed ? (
+      <img
+        src={cover}
+        alt={coverAlt}
+        class="h-full w-full object-cover"
+        loading={eager ? 'eager' : 'lazy'}
+      />
+    ) : (
+      <div class="frame grid h-full grid-cols-4 gap-x-6">
+        <div class="col-span-4 mt-[4.5rem] h-[46svh] md:col-span-2 md:col-start-3 md:mt-0 md:h-[66svh] md:self-center">
+          {
+            cover && coverLive === 'market-breadth' ? (
+              href ? (
+                <a href={href} class="cover-link block h-full w-full" tabindex="-1">
+                  <MarketBreadthCover src={cover} alt={coverAlt} eager={eager} />
+                </a>
+              ) : (
+                <MarketBreadthCover src={cover} alt={coverAlt} eager={eager} />
+              )
+            ) : cover && href ? (
+              <a href={href} class="cover-link block h-full w-full" tabindex="-1" aria-hidden="true">
+                <img
+                  src={cover}
+                  alt=""
+                  class:list={['cover-art h-full w-full object-contain', focus]}
+                  loading={eager ? 'eager' : 'lazy'}
+                />
+              </a>
+            ) : cover ? (
+              // contain, not cover: cut-out compositions stay whole on every screen size
+              <img
+                src={cover}
+                alt={coverAlt}
+                class:list={['cover-art h-full w-full object-contain', focus]}
+                loading={eager ? 'eager' : 'lazy'}
+              />
+            ) : (
+              <div class="flex h-full items-end rounded-[18px] border border-current/20 p-4 text-sm opacity-60">
+                Add a cover in public/covers
+              </div>
+            )
+          }
+        </div>
+      </div>
+    )
+  }
+</div>

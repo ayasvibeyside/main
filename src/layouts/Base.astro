@@ -1,0 +1,96 @@
+---
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/figtree';
+import '../styles/global.css';
+import { site } from '../site';
+import Clocks from '../components/Clocks.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  // stage: the header floats over full-screen colour (home page and case-study heroes)
+  stage?: boolean;
+}
+
+const { title, description = site.description, stage = false } = Astro.props;
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name}, ${site.role.toLowerCase()}`;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/#work', label: 'Work', active: path === '/' || path.startsWith('/work') },
+  { href: '/about', label: 'About', active: path.startsWith('/about') },
+  { href: `mailto:${site.email}`, label: 'Contact', active: false },
+];
+---
+
+<!doctype html>
+<html lang="en" data-stage={stage ? 'on' : 'off'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}: ${site.role}. ThndrX and Traders case studies.`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL('/og.jpg', Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="min-h-screen">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-3 focus:py-2"
+      >Skip to content</a
+    >
+
+    <header class="site-header fixed inset-x-0 top-0 z-40">
+      <div class="frame grid grid-cols-[auto_1fr] items-baseline gap-x-6 py-3.5 text-sm md:grid-cols-4">
+        <a href="/" class="whitespace-nowrap font-serif text-[1.35rem] leading-none tracking-tight no-underline">
+          {site.name}
+        </a>
+        <nav aria-label="Main" class="md:col-span-3">
+          <ul class="flex justify-end gap-5 md:grid md:grid-cols-3 md:gap-x-6">
+            {
+              nav.map((item, i) => (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={item.active ? 'page' : undefined}
+                    class="nav-link no-underline"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class:list={[!stage && 'pt-24']}>
+      <slot />
+    </main>
+
+    <footer class="frame mt-28 pb-6">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-5 text-sm text-ink-soft sm:grid-cols-4">
+        <p class="text-ink">{site.name}</p>
+        <Clocks />
+        <ul class="flex gap-5 sm:col-start-3">
+          <li><a href={`mailto:${site.email}`} class="hover:text-ink">Email</a></li>
+          <li><a href={site.linkedin} class="hover:text-ink">LinkedIn</a></li>
+          <li><a href={site.resume} class="hover:text-ink">Résumé</a></li>
+        </ul>
+        <p class="sm:text-right">©{new Date().getFullYear()}</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,137 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import { tintFg } from '../../tints';
+import { caseStudyHref } from '../../links';
+
+export async function getStaticPaths() {
+  const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return work
+    .map((entry, i) => ({
+      params: { slug: entry.id },
+      props: { entry, index: i, total: work.length, next: work[(i + 1) % work.length] },
+    }))
+    .filter(({ props }) => !props.entry.data.caseStudy);
+}
+
+const { entry, index, total, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const { title, summary, category, year, role, timeline, scope, team, outcome, links, tint } =
+  entry.data;
+const sections = headings.filter((h) => h.depth === 2);
+const fg = tintFg[tint];
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const facts = [
+  { label: 'Role', value: role },
+  { label: 'Timeline', value: timeline },
+  { label: 'Scope', value: scope },
+  { label: 'Team', value: team },
+  { label: 'Outcome', value: outcome },
+].filter((f) => f.value);
+---
+
+<Base title={title} description={summary} stage>
+  <article>
+    <header class="case-hero relative h-svh" style={`color:${fg};--stage-fg:${fg}`}>
+      <Cover data={entry.data} eager />
+      <div class="frame relative grid h-full grid-cols-4 gap-x-6">
+        <div class="col-span-4 grid grid-cols-4 gap-x-6 self-end pb-16 md:self-center md:pb-0" style="grid-area:1/1/2/5">
+          <p class="text-sm tabular-nums">{pad(index + 1)}—{pad(total)}</p>
+          <div class="col-span-3 md:col-span-1">
+            <p class="text-sm">{category}</p>
+            <h1 class="mt-1 font-serif text-[2.8rem] font-light leading-[1.02] tracking-[-0.02em] lg:text-[3.8rem]">
+              {title}
+            </h1>
+            <p class="mt-3 max-w-[34ch] text-[0.95rem] leading-relaxed opacity-75">{summary}</p>
+          </div>
+        </div>
+        <div class="col-span-4 grid grid-cols-4 gap-x-6 self-end pb-3.5 text-sm" style="grid-area:1/1/2/5">
+          <a href="/#work" class="no-underline opacity-80 hover:opacity-100">All work</a>
+          <a href="#case" class="col-span-2 no-underline md:col-span-1">(Read the case study)</a>
+          <p class="col-start-4 hidden text-right tabular-nums md:block">{year}</p>
+        </div>
+      </div>
+    </header>
+
+    <div id="case" class="frame grid scroll-mt-24 grid-cols-4 gap-x-6 pt-16">
+      <dl class="col-span-4 grid grid-cols-2 gap-x-6 gap-y-6 border-b border-line pb-10 md:col-span-3 md:col-start-2 md:grid-cols-[repeat(auto-fit,minmax(9.5rem,1fr))]">
+        {
+          facts.map((f) => (
+            <div>
+              <dt class="text-sm text-ink-soft">{f.label}</dt>
+              <dd class:list={['mt-1', f.label === 'Outcome' && 'text-dusk']}>{f.value}</dd>
+            </div>
+          ))
+        }
+        {
+          links.length > 0 && (
+            <div>
+              <dt class="text-sm text-ink-soft">Links</dt>
+              <dd class="mt-1 flex flex-col gap-0.5">
+                {links.map((l) => (
+                  <a href={l.href} target="_blank" rel="noopener" class="text-dusk underline">
+                    {l.label}
+                  </a>
+                ))}
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </div>
+
+    <div class="frame mt-14 grid grid-cols-4 gap-x-6">
+      {
+        sections.length > 0 && (
+          <nav aria-label="On this page" class="hidden md:block">
+            <ul class="sticky top-24 space-y-2 text-sm">
+              {sections.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} class="text-ink-soft no-underline hover:text-ink">
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+      <div class="prose prose-lg prose-case col-span-4 max-w-[68ch] md:col-span-2">
+        <Content />
+      </div>
+    </div>
+
+    {
+      next && next.id !== entry.id && (
+        <div class="frame mt-28 grid grid-cols-4 gap-x-6">
+          <a
+            href={caseStudyHref(next)}
+            class="group col-span-4 grid grid-cols-4 gap-x-6 border-t border-line pt-5 no-underline md:col-span-3 md:col-start-2"
+          >
+            <span class="text-sm text-ink-soft">Next case study</span>
+            <span class="col-span-3 font-serif text-4xl tracking-tight group-hover:text-dusk md:col-span-2">
+              {next.data.title}
+            </span>
+          </a>
+        </div>
+      )
+    }
+  </article>
+</Base>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('.case-hero');
+  if (hero) {
+    const root = document.documentElement;
+    root.style.setProperty('--stage-fg', hero.style.color);
+    const update = () => {
+      root.dataset.over = hero.getBoundingClientRect().bottom > 56 ? 'stage' : 'paper';
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+</script>

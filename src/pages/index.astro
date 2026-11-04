@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Showcase from '../components/Showcase.astro';
+import Note from '../components/Note.astro';
+import { site } from '../site';
+import { caseStudyHref } from '../links';
+
+const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base stage>
+  <h1 class="sr-only">{site.name}, {site.role.toLowerCase()}</h1>
+
+  <Showcase work={work} />
+
+  <section class="frame grid grid-cols-4 gap-x-6 gap-y-10 pt-28 sm:pt-36">
+    <h2
+      class="col-span-4 max-w-[19ch] font-serif text-[2.4rem] font-light leading-[1.08] tracking-[-0.02em] md:col-span-3 md:col-start-2 sm:text-[3.6rem]"
+    >
+      I design products, and I’m learning to decide which ones get built.
+    </h2>
+    <p class="col-span-4 max-w-[52ch] text-lg leading-relaxed text-ink-soft md:col-span-2 md:col-start-2">
+      Product designer since 2020, now moving into product management. I’ve worked on a
+      trading platform used across the Thndr app and web, and on a game that teaches
+      business acumen.
+    </p>
+  </section>
+
+  <section aria-labelledby="index-heading" class="frame mt-24 grid grid-cols-4 gap-x-6">
+    <h2 id="index-heading" class="col-span-4 mb-4 text-sm text-ink-soft md:col-span-1">
+      All case studies
+    </h2>
+    <ol class="col-span-4 border-t border-line md:col-span-3">
+      {
+        work.map((entry) => (
+          <li class="border-b border-line">
+            <a
+              href={caseStudyHref(entry)}
+              class="group grid grid-cols-3 items-baseline gap-x-6 py-4 no-underline"
+            >
+              <span class="font-serif text-2xl tracking-tight group-hover:text-dusk">
+                {entry.data.title}
+              </span>
+              <span class="text-sm text-ink-soft">{entry.data.category}</span>
+              <span class="text-right text-sm tabular-nums text-ink-soft">
+                {entry.data.year}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="frame mt-24 grid grid-cols-1 gap-5 md:grid-cols-4 md:gap-x-6">
+    <div class="md:col-start-2">
+      <Note index={0} heading="Right now">
+        Designing for Mirqah Media Lab, building my own product tools, and looking for my first
+        product manager role.
+      </Note>
+    </div>
+    <div>
+      <Note index={1} variant="quote">
+        Good design answers how. I want to spend more of my time on why, and on what we leave
+        out.
+      </Note>
+    </div>
+    <div>
+      <Note index={2} variant="ink" heading="Working on something?">
+        <p>I’m open to product designer and product manager roles.</p>
+        <p class="mt-4 flex flex-wrap gap-3">
+          <a
+            href={`mailto:${site.email}`}
+            class="rounded-full bg-paper px-4 py-1.5 text-ink no-underline hover:bg-paper/85"
+            >Email me</a
+          >
+          {
+            site.cal && (
+              <a
+                href={site.cal}
+                class="rounded-full border border-paper/40 px-4 py-1.5 text-paper no-underline hover:border-paper"
+              >
+                Book a call
+              </a>
+            )
+          }
+          <a href={site.resume} class="px-1 py-1.5 text-paper/80 hover:text-paper">Résumé</a>
+        </p>
+      </Note>
+    </div>
+  </section>
+</Base>

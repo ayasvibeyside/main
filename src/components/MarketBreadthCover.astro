@@ -1,0 +1,162 @@
+---
+// ThndrX cover with live market chips: the EGX 30 index and advancers vs decliners.
+// The cover image (without the chip) sits in an SVG that scales like object-contain,
+// and the chip is drawn on top so its bars and numbers can drift like a real market.
+interface Props {
+  src: string; // cover without the chip, 2000 × 1600
+  alt: string;
+  eager?: boolean;
+}
+const { src, alt, eager = false } = Astro.props;
+
+// Chip geometry in the cover's 2000 × 1600 space (matches the original composition)
+const W = 643;
+const H = 122;
+const CX = 1496.33;
+const CY = 1171.44;
+// EGX 30 index chip
+const EW = 314;
+const EH = 241;
+const ECX = 268.17;
+const ECY = 460.06;
+---
+
+<svg
+  class="cover-art h-full w-full"
+  viewBox="0 0 2000 1600"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-label={alt}
+  data-breadth
+>
+  <defs>
+    <filter id="mb-shadow" x="-20%" y="-40%" width="140%" height="200%">
+      <feDropShadow dx="0" dy="22" stdDeviation="17" flood-color="#05090c" flood-opacity="0.45" />
+    </filter>
+  </defs>
+  <image href={src} width="2000" height="1600" decoding={eager ? 'sync' : 'async'} />
+  <g transform={`translate(${CX} ${CY}) rotate(2) translate(${-W / 2} ${-H / 2})`} filter="url(#mb-shadow)">
+    <rect width={W} height={H} rx="30" fill="#070707" stroke="#2e2e2e" stroke-width="2" />
+    <g font-family="'Figtree Variable', system-ui, sans-serif" font-size="28" style="font-variant-numeric: tabular-nums">
+      <text x="52.75" y="63.5">
+        <tspan fill="#9a9a9a" font-weight="500">Decliners</tspan>
+        <tspan dx="7" fill="#ffffff" font-weight="600" data-mb="dec">66</tspan>
+        <tspan dx="7" fill="#fa4661" font-weight="500" data-mb="decp">24%</tspan>
+      </text>
+      <text x="592.75" y="63.5" text-anchor="end">
+        <tspan fill="#75cc43" font-weight="500" data-mb="advp">57%</tspan>
+        <tspan dx="7" fill="#ffffff" font-weight="600" data-mb="adv">155</tspan>
+        <tspan dx="7" fill="#9a9a9a" font-weight="500">Advancers</tspan>
+      </text>
+    </g>
+    <rect data-mb="bar-dec" x="50.25" y="83.5" width="130" height="5" rx="2.5" fill="#fa4661" />
+    <rect data-mb="bar-unch" x="185" y="83.5" width="97" height="5" rx="2.5" fill="#8b8b8b" />
+    <rect data-mb="bar-adv" x="287" y="83.5" width="307" height="5" rx="2.5" fill="#75cc43" />
+  </g>
+  <g transform={`translate(${ECX} ${ECY}) rotate(-3) translate(${-EW / 2} ${-EH / 2})`} filter="url(#mb-shadow)">
+    <rect width={EW} height={EH} rx="30" fill="#070707" stroke="#2e2e2e" stroke-width="2" />
+    <g font-family="'Figtree Variable', system-ui, sans-serif" style="font-variant-numeric: tabular-nums">
+      <text x="48" y="71" font-size="34" fill="#9a9a9a" font-weight="400">EGX 30</text>
+      <text x="47" y="134">
+        <tspan font-size="37" fill="#ffffff" font-weight="500" data-mb="egx">48,747.63</tspan>
+        <tspan dx="7" font-size="24" fill="#ffffff" font-weight="500">PTS</tspan>
+      </text>
+      <text x="48" y="193" font-size="31" font-weight="500" fill="#75cc43" data-mb="egxp">+0.71%</text>
+    </g>
+  </g>
+</svg>
+
+<script>
+  // A slow, mostly rising market. Every few seconds the EGX 30 takes a small step
+  // (usually up), and advancers/decliners lean the same way. Numbers, percentages
+  // and bars all ease to the new values.
+  const TOTAL = 272; // stocks traded
+  const PREV_CLOSE = 48404.0; // so 48,747.63 reads as +0.71%, as in the original
+  const BAR_X = 50.25;
+  const BAR_SPAN = 543.75;
+  const GAP = 5;
+  const STEP_MS = 3400;
+  const TWEEN_MS = 2200;
+
+  type State = { dec: number; adv: number; egx: number };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let cur: State = { dec: 66, adv: 155, egx: 48747.63 };
+  let from: State = { ...cur };
+  let to: State = { ...cur };
+  let t0 = 0;
+  let raf = 0;
+
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const rand = (lo: number, hi: number) => Math.round(lo + Math.random() * (hi - lo));
+  const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const set = (key: string, text: string) =>
+    document.querySelectorAll(`[data-mb="${key}"]`).forEach((el) => (el.textContent = text));
+
+  function render(v: State) {
+    const dec = Math.round(v.dec);
+    const adv = Math.round(v.adv);
+    set('dec', String(dec));
+    set('adv', String(adv));
+    set('decp', `${Math.round((dec / TOTAL) * 100)}%`);
+    set('advp', `${Math.round((adv / TOTAL) * 100)}%`);
+
+    // Index value and change, coloured by direction
+    const change = (v.egx / PREV_CLOSE - 1) * 100;
+    set('egx', fmt.format(v.egx));
+    set('egxp', `${change >= 0 ? '+' : '−'}${Math.abs(change).toFixed(2)}%`);
+    document
+      .querySelectorAll('[data-mb="egxp"]')
+      .forEach((el) => el.setAttribute('fill', change >= 0 ? '#75cc43' : '#fa4661'));
+
+    // Bars follow the smooth (unrounded) values so they glide
+    const usable = BAR_SPAN - GAP * 2;
+    const wDec = (v.dec / TOTAL) * usable;
+    const wAdv = (v.adv / TOTAL) * usable;
+    const wUnch = usable - wDec - wAdv;
+    const bars: [string, number, number][] = [
+      ['bar-dec', BAR_X, wDec],
+      ['bar-unch', BAR_X + wDec + GAP, wUnch],
+      ['bar-adv', BAR_X + wDec + GAP + wUnch + GAP, wAdv],
+    ];
+    for (const [key, x, w] of bars) {
+      document.querySelectorAll(`[data-mb="${key}"]`).forEach((el) => {
+        el.setAttribute('x', x.toFixed(2));
+        el.setAttribute('width', Math.max(0, w).toFixed(2));
+      });
+    }
+  }
+
+  function frame(now: number) {
+    const t = Math.min(1, (now - t0) / TWEEN_MS);
+    const k = ease(t);
+    cur = {
+      dec: from.dec + (to.dec - from.dec) * k,
+      adv: from.adv + (to.adv - from.adv) * k,
+      egx: from.egx + (to.egx - from.egx) * k,
+    };
+    render(cur);
+    raf = t < 1 ? requestAnimationFrame(frame) : 0;
+  }
+
+  function step() {
+    if (document.hidden || !document.querySelector('[data-breadth]')) return;
+    // Index: mostly up, the odd small dip; eases back if it runs past +2.5%
+    const ceiling = PREV_CLOSE * 1.025;
+    const drift = to.egx > ceiling ? -6 : 3;
+    const move = drift + (Math.random() - 0.45) * 12;
+    const egx = Math.round((to.egx + move) * 100) / 100;
+    // Breadth leans the way the index moved
+    const swing = Math.round(move / 3) + rand(-2, 2);
+    const adv = clamp(Math.round(to.adv) + swing, 138, 174);
+    const dec = clamp(Math.round(to.dec) - Math.round(swing * 0.6) + rand(-1, 1), 52, 86);
+    from = { ...cur };
+    to = { dec, adv: Math.min(adv, TOTAL - dec - 20), egx };
+    t0 = performance.now();
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+
+  render(cur);
+  if (!reduce.matches) setInterval(step, STEP_MS);
+</script>

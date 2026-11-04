@@ -1,0 +1,40 @@
+---
+// Live local time where you work from. Add cities to the list to show more.
+const cities = [
+  { label: 'Cairo', zone: 'Africa/Cairo' },
+];
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<p class:list={['tabular-nums', className]}>
+  {
+    cities.map((c, i) => (
+      <>
+        {i > 0 && <span aria-hidden="true"> / </span>}
+        <span>
+          {c.label} <time data-clock={c.zone}>--:--</time>
+        </span>
+      </>
+    ))
+  }
+</p>
+
+<script>
+  const fmt = new Map<string, Intl.DateTimeFormat>();
+  function tick() {
+    document.querySelectorAll<HTMLElement>('[data-clock]').forEach((el) => {
+      const zone = el.dataset.clock!;
+      if (!fmt.has(zone))
+        fmt.set(
+          zone,
+          new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: zone }),
+        );
+      el.textContent = fmt.get(zone)!.format(new Date());
+    });
+  }
+  tick();
+  setInterval(tick, 15_000);
+</script>

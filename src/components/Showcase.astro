@@ -1,0 +1,216 @@
+---
+// Full-screen work showcase. One project per screen; scrolling cuts to the next
+// with a vertical-slice transition. Uses normal page scroll (no scroll-jacking),
+// so keyboard, trackpads and screen readers behave as usual.
+import type { CollectionEntry } from 'astro:content';
+import Cover from './Cover.astro';
+import Clocks from './Clocks.astro';
+import { tintFg } from '../tints';
+import { caseStudyHref } from '../links';
+
+interface Props {
+  work: CollectionEntry<'work'>[];
+}
+
+const { work } = Astro.props;
+const total = work.length;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section
+  id="work"
+  class="showcase relative"
+  style={`height:${total * 100}svh`}
+  aria-label="Selected work"
+>
+  <div class="stage sticky top-0 h-svh overflow-hidden" style={`color:${tintFg[work[0].data.tint]}`}>
+    <div class="layers absolute inset-0">
+      {
+        work.map((entry, i) => (
+          <div
+            class="layer absolute inset-0"
+            data-layer={i}
+            data-fg={tintFg[entry.data.tint]}
+            style={`color:${tintFg[entry.data.tint]};opacity:${i === 0 ? 1 : 0};pointer-events:${i === 0 ? 'auto' : 'none'}`}
+          >
+            <Cover data={entry.data} eager={i === 0} href={caseStudyHref(entry)} />
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="slices pointer-events-none absolute inset-0" aria-hidden="true"></div>
+
+    <div class="meta frame pointer-events-none absolute inset-0 grid grid-cols-4 gap-x-6">
+      {
+        work.map((entry, i) => (
+          <article
+            class="project col-span-4 grid grid-cols-4 gap-x-6 self-end pb-16 md:self-center md:pb-0"
+            data-project={i}
+            data-active={i === 0 ? 'true' : 'false'}
+            style={`grid-area:1/1/2/5`}
+          >
+            <p class="text-sm tabular-nums">
+              {pad(i + 1)}—{pad(total)}
+            </p>
+            <div class="col-span-3 md:col-span-1">
+              <p class="text-sm">{entry.data.category}</p>
+              <h3 class="mt-1 font-serif text-[2.6rem] font-light leading-[1.02] tracking-[-0.02em] lg:text-[3.4rem]">
+                <a href={caseStudyHref(entry)} class="no-underline">
+                  {entry.data.title}
+                </a>
+              </h3>
+              <p class="mt-3 max-w-[34ch] text-[0.95rem] leading-relaxed opacity-75">
+                {entry.data.summary}
+              </p>
+              <a href={caseStudyHref(entry)} class="mt-4 inline-block text-sm underline">
+                Open case study
+              </a>
+            </div>
+          </article>
+        ))
+      }
+
+      <div class="pointer-events-none col-span-4 grid grid-cols-4 gap-x-6 self-end pb-3.5 text-sm" style="grid-area:1/1/2/5">
+        <Clocks class="hidden md:block" />
+        <p class="scroll-hint col-span-2 md:col-span-1">(Scroll to explore)</p>
+        <p class="col-start-4 hidden text-right tabular-nums md:block">
+          {
+            work.map((entry, i) => (
+              <span class="year" data-year={i} hidden={i !== 0}>
+                {entry.data.year}
+              </span>
+            ))
+          }
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .project {
+    transition: opacity 260ms ease;
+  }
+  .meta a {
+    pointer-events: auto;
+  }
+  .project[data-active='false'] {
+    opacity: 0;
+    visibility: hidden;
+  }
+</style>
+
+<script>
+  const SLICES = 6;
+  const DURATION = 760;
+  const STAGGER = 70;
+
+  const section = document.querySelector<HTMLElement>('.showcase');
+  if (section) {
+    const stage = section.querySelector<HTMLElement>('.stage')!;
+    const layers = [...section.querySelectorAll<HTMLElement>('[data-layer]')];
+    const projects = [...section.querySelectorAll<HTMLElement>('[data-project]')];
+    const years = [...section.querySelectorAll<HTMLElement>('[data-year]')];
+    const slices = section.querySelector<HTMLElement>('.slices')!;
+    const hint = section.querySelector<HTMLElement>('.scroll-hint')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.documentElement;
+
+    let shown = 0; // layer currently fully visible
+    let target = 0; // layer we're moving to
+    let running: Animation[] = [];
+    let metaTimer = 0;
+
+    function setBase(i: number) {
+      layers.forEach((l, j) => {
+        l.style.opacity = j === i ? '1' : '0';
+        // only the visible slide reacts to hover and clicks
+        l.style.pointerEvents = j === i ? 'auto' : 'none';
+      });
+      shown = i;
+    }
+
+    function setMeta(i: number) {
+      const fg = layers[i].dataset.fg!;
+      stage.style.color = fg;
+      root.style.setProperty('--stage-fg', fg);
+      projects.forEach((p, j) => (p.dataset.active = j === i ? 'true' : 'false'));
+      years.forEach((y, j) => (y.hidden = j !== i));
+      hint.textContent = i === layers.length - 1 ? '(Keep scrolling)' : '(Scroll to explore)';
+    }
+
+    function go(i: number) {
+      if (i === target) return;
+      // Finish any cut in progress instantly so cuts never stack up
+      running.forEach((a) => a.cancel());
+      running = [];
+      clearTimeout(metaTimer);
+      slices.replaceChildren();
+      setBase(target);
+      setMeta(target);
+
+      target = i;
+
+      if (reduce.matches) {
+        setBase(i);
+        setMeta(i);
+        return;
+      }
+      // Swap the text once the new colour has covered about half the screen
+      metaTimer = window.setTimeout(() => setMeta(i), DURATION * 0.5);
+
+      const width = stage.clientWidth;
+      const step = width / SLICES;
+      const mid = (SLICES - 1) / 2;
+      for (let s = 0; s < SLICES; s++) {
+        const strip = document.createElement('div');
+        strip.style.cssText = 'position:absolute;top:0;bottom:0;overflow:hidden';
+        strip.style.left = `${s * step}px`;
+        strip.style.width = `${Math.ceil(step) + 1}px`;
+        const copy = layers[i].cloneNode(true) as HTMLElement;
+        copy.removeAttribute('data-layer');
+        copy.style.opacity = '1';
+        copy.style.width = `${width}px`;
+        copy.style.left = `${-s * step}px`;
+        copy.style.right = 'auto';
+        strip.appendChild(copy);
+        slices.appendChild(strip);
+        running.push(
+          strip.animate(
+            [{ clipPath: 'inset(0 50% 0 50%)' }, { clipPath: 'inset(0 0% 0 0%)' }],
+            {
+              duration: DURATION,
+              delay: Math.abs(s - mid) * STAGGER,
+              easing: 'cubic-bezier(0.7, 0, 0.2, 1)',
+              fill: 'both',
+            },
+          ),
+        );
+      }
+      const cut = running;
+      Promise.all(cut.map((a) => a.finished))
+        .then(() => {
+          if (cut !== running) return;
+          setBase(i);
+          slices.replaceChildren();
+          running = [];
+        })
+        .catch(() => {});
+    }
+
+    function onScroll() {
+      const rect = section!.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const i = Math.min(layers.length - 1, Math.max(0, Math.floor((-rect.top + vh * 0.5) / vh)));
+      go(i);
+      // Header floats over the stage until the showcase scrolls away
+      root.dataset.over = rect.bottom > 56 ? 'stage' : 'paper';
+    }
+
+    setMeta(0);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+  }
+</script>
