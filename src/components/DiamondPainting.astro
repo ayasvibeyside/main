@@ -54,7 +54,7 @@ const counts = Object.fromEntries(
       <h2 id="dp-title" class="font-serif text-[1.35rem] font-light leading-tight tracking-[-0.01em]">
         My current obsession: diamond painting
       </h2>
-      <p class="dp-hint">Pick a colour, then click or drag to press the diamonds into place.</p>
+      <p class="dp-hint">Pick a colour, then click or drag.</p>
     </div>
 
     <canvas
@@ -79,7 +79,7 @@ const counts = Object.fromEntries(
     <div class="dp-foot">
       <div class="dp-progress">
         <span class="dp-bar" aria-hidden="true"><span class="dp-fill"></span></span>
-        <span class="dp-count" data-count>0 of {total} placed</span>
+        <span class="sr-only" data-count>0 of {total} placed</span>
       </div>
       <div class="dp-actions">
         <button type="button" class="dp-btn" data-sound aria-pressed="true">Sound on</button>
@@ -93,6 +93,9 @@ const counts = Object.fromEntries(
 
 <style>
   .dp-card {
+    /* As wide as the board needs to be to fit above the fold; the board fills it edge to edge. */
+    width: min(100%, max(320px, calc(100svh - 420px + 2rem)));
+    margin-left: auto;
     background: var(--color-night);
     color: #f2e9ef;
     border-radius: 24px;
@@ -112,9 +115,9 @@ const counts = Object.fromEntries(
   /* The canvas is sized by the screen height, so the whole card fits above the fold. */
   .dp-canvas {
     display: block;
-    width: min(100%, max(280px, calc(100svh - 395px)));
+    width: 100%;
     aspect-ratio: 1;
-    margin: 0.75rem auto 0;
+    margin: 0.75rem 0 0;
     border-radius: 16px;
     background: #1f0612;
     touch-action: none;
@@ -169,8 +172,8 @@ const counts = Object.fromEntries(
     gap: 0.6rem;
     margin-top: 0.7rem;
   }
-  .dp-progress { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #d9c3d4; }
-  .dp-bar { width: 6rem; height: 5px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
+  .dp-progress { flex: 1; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #d9c3d4; }
+  .dp-bar { flex: 1; min-width: 4rem; height: 5px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
   .dp-fill { display: block; height: 100%; width: 0; background: #ede288; border-radius: inherit; transition: width 250ms ease-out; }
   .dp-count { font-variant-numeric: tabular-nums; }
   .dp-actions { display: flex; gap: 0.4rem; }
@@ -423,7 +426,7 @@ const counts = Object.fromEntries(
         master.connect(audio.destination);
         const warm = audio.createBiquadFilter();
         warm.type = 'lowpass';
-        warm.frequency.value = 4200;
+        warm.frequency.value = 3800;
         warm.connect(master);
         const echo = audio.createDelay(1);
         echo.delayTime.value = 0.24;
@@ -445,33 +448,46 @@ const counts = Object.fromEntries(
       if (audio.state === 'suspended') audio.resume();
       return audio;
     };
-    // A soft, kalimba-like pluck: a sine with a quiet octave above, a slow bloom and a long fade.
-    function pluck(freq: number, when = 0, vol = 0.07, ring = 1.2) {
+    // A deep, warm note (a low sine that settles from a tiny pitch drop) with a short bright "ping" on top.
+    function pluck(freq: number, when = 0, vol = 0.12, ring = 1.4) {
       const a = ac();
       if (!a || !bus) return;
       const t = a.currentTime + when;
       const detune = 1 + (Math.random() - 0.5) * 0.004;
-      for (const [mul, v, len] of [[1, vol, ring], [2, vol * 0.22, ring * 0.35], [3, vol * 0.06, ring * 0.2]] as const) {
+      const f = freq * detune;
+      const voice = (
+        type: OscillatorType,
+        from: number,
+        to: number,
+        peak: number,
+        len: number,
+        drop = 0.04,
+      ) => {
         const o = a.createOscillator();
-        o.type = 'sine';
-        o.frequency.value = freq * mul * detune;
+        o.type = type;
+        o.frequency.setValueAtTime(from, t);
+        if (from !== to) o.frequency.exponentialRampToValueAtTime(to, t + drop);
         const g = a.createGain();
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(v, t + 0.012);
+        g.gain.exponentialRampToValueAtTime(peak, t + 0.01);
         g.gain.exponentialRampToValueAtTime(0.0001, t + len);
-        o.connect(g).connect(bus.dry);
+        o.connect(g).connect(bus!.dry);
         o.start(t);
         o.stop(t + len + 0.05);
-      }
+      };
+      voice('sine', f * 1.3, f, vol, ring); // the deep body
+      voice('sine', f * 2, f * 2, vol * 0.3, ring * 0.5, 0.01); // warmth
+      const ping = Math.min(2800, Math.max(1500, f * 8)) * 1.004;
+      voice('sine', ping, ping, vol * 0.5, 0.22, 0.01); // the ping
     }
-    // C major pentatonic across two octaves, so any run of notes sounds calm together.
-    const scale = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51, 1567.98, 1760];
-    let noteIdx = 2;
+    // C major pentatonic from C3 up to A4, so any run of notes sounds calm together.
+    const scale = [130.81, 146.83, 164.81, 196, 220, 261.63, 293.66, 329.63, 392, 440];
+    let noteIdx = 3;
     function playPlace(when = 0) {
       if (!soundOn) return;
       const steps = [-2, -1, 1, 1, 2];
       noteIdx = Math.min(scale.length - 1, Math.max(0, noteIdx + steps[Math.floor(Math.random() * steps.length)]));
-      pluck(scale[noteIdx], when, 0.06, 1.3);
+      pluck(scale[noteIdx], when, 0.13, 1.5);
     }
     function thud() {
       if (!soundOn) return;
@@ -480,17 +496,17 @@ const counts = Object.fromEntries(
       const t = a.currentTime;
       const o = a.createOscillator();
       o.type = 'sine';
-      o.frequency.setValueAtTime(196, t);
-      o.frequency.exponentialRampToValueAtTime(165, t + 0.25);
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(92, t + 0.25);
       const g = a.createGain();
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.05, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.09, t + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
       o.connect(g).connect(bus.dry);
       o.start(t);
       o.stop(t + 0.4);
     }
-    function chime(freqs: number[], gap = 0.2, vol = 0.07, ring = 2) {
+    function chime(freqs: number[], gap = 0.2, vol = 0.1, ring = 2) {
       if (!soundOn) return;
       freqs.forEach((f, i) => pluck(f, i * gap, vol, ring));
     }
@@ -545,7 +561,7 @@ const counts = Object.fromEntries(
         sparks.push({ x, y, t0: performance.now(), delay: delay * 1000, big: false, hex: byKey[k].hex });
       }
       if (left[k] === 0 && placedCount < total) {
-        chime([783.99, 1046.5], 0.22, 0.07, 1.8);
+        chime([196, 261.63], 0.22, 0.12, 1.8);
         haptic([14, 40, 14]);
         refreshUI(`${byKey[k].name} is finished.`);
         nextColour();
@@ -556,7 +572,7 @@ const counts = Object.fromEntries(
 
     function celebrate() {
       refreshUI('The orchid is finished. Lovely.');
-      chime([523.25, 659.25, 783.99, 1046.5, 1318.51], 0.24, 0.07, 2.6);
+      chime([130.81, 164.81, 196, 261.63, 329.63], 0.26, 0.12, 2.8);
       haptic([18, 50, 18, 50, 40]);
       if (!reduceMotion.matches) {
         const now = performance.now();
