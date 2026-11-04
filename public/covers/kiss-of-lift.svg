@@ -15,6 +15,13 @@
     <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3535"/><stop offset="1" stop-color="#1a1616"/></linearGradient>
     <radialGradient id="fade" cx="400" cy="610" r="400" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <mask id="glowMask"><rect x="0" y="0" width="800" height="1000" fill="url(#fade)"/></mask>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8282"/><stop offset=".06" stop-color="#4d4646"/><stop offset=".5" stop-color="#1d1818"/><stop offset=".94" stop-color="#3f3838"/><stop offset="1" stop-color="#756d6d"/></linearGradient>
+    <linearGradient id="metalEdge" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b9b1b1"/><stop offset=".08" stop-color="#4a4343"/><stop offset=".5" stop-color="#241f1f"/><stop offset=".92" stop-color="#4a4343"/><stop offset="1" stop-color="#9d9595"/></linearGradient>
+    <linearGradient id="cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#171212"/><stop offset=".28" stop-color="#a39b9b"/><stop offset=".55" stop-color="#4f4848"/><stop offset="1" stop-color="#181313"/></linearGradient>
+    <linearGradient id="glassG" x1="0" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".17"/><stop offset=".32" stop-color="#fff" stop-opacity=".05"/><stop offset=".33" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="edgeSpec" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient>
+    <linearGradient id="lugG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3333"/><stop offset="1" stop-color="#171212"/></linearGradient>
+    <linearGradient id="strapShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
     <clipPath id="screen"><rect x="262" y="458" width="276" height="338" rx="62"/></clipPath>
     <clipPath id="strapT"><path d="M300 150 H500 V470 H300 Z"/></clipPath>
     <clipPath id="strapB"><path d="M300 790 H500 V1000 H300 Z"/></clipPath>
@@ -29,23 +36,33 @@
   <g mask="url(#mTop)"><g clip-path="url(#strapT)"><rect x="300" y="150" width="200" height="330" fill="#171313"/><use href="#holo" transform="translate(240 90) scale(1.2 1.25)" filter="url(#pop)"/></g></g>
   <g mask="url(#mBot)"><g clip-path="url(#strapB)"><rect x="300" y="790" width="200" height="210" fill="#171313"/><use href="#holo" transform="translate(240 700) scale(1.2 1.1)" filter="url(#pop)"/></g></g>
 
+  <!-- soft shade under the lugs -->
+  <rect x="300" y="460" width="200" height="34" fill="url(#strapShade)" opacity=".7"/>
+  <rect x="300" y="772" width="200" height="22" fill="url(#strapShade)" opacity=".5" transform="rotate(180 400 783)"/>
+
   <!-- strap edges and sizing holes -->
   <g fill="none" stroke="#fff" stroke-opacity=".14" stroke-width="1.5"><path d="M300 200 V430 M500 200 V430" mask="url(#mTop)"/><path d="M300 832 V930 M500 832 V930" mask="url(#mBot)"/></g>
   <g fill="#0b0909" opacity=".75" mask="url(#mBot)"><circle cx="400" cy="860" r="7"/><circle cx="400" cy="892" r="7"/><circle cx="400" cy="924" r="7"/></g>
 
-  <!-- watch case -->
+  <!-- watch case: crown and button sit behind the body -->
   <g filter="url(#shadow)">
-    <rect x="552" y="548" width="26" height="84" rx="10" fill="#3b3434"/>
-    <g stroke="#0f0c0c" stroke-width="2" opacity=".7"><path d="M556 560 H576 M556 570 H576 M556 580 H576 M556 590 H576 M556 600 H576 M556 610 H576 M556 620 H576"/></g>
-    <rect x="552" y="548" width="26" height="84" rx="10" fill="none" stroke="url(#rim)" stroke-width="1.6" opacity=".7"/>
-    <rect x="554" y="656" width="14" height="58" rx="6" fill="#322b2b"/>
-    <!-- lugs where the strap meets the case -->
-    <rect x="288" y="418" width="224" height="46" rx="14" fill="#2b2525"/>
-    <rect x="288" y="790" width="224" height="46" rx="14" fill="#2b2525"/>
-    <rect x="240" y="436" width="320" height="382" rx="84" fill="url(#case)"/>
+    <rect x="551" y="546" width="30" height="88" rx="11" fill="url(#cyl)"/>
+    <g stroke="#0b0808" stroke-width="2" opacity=".55"><path d="M553 558 H579 M553 568 H579 M553 578 H579 M553 588 H579 M553 598 H579 M553 608 H579 M553 618 H579"/></g>
+    <rect x="551" y="546" width="30" height="88" rx="11" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="1.4"/>
+    <rect x="553" y="654" width="16" height="62" rx="7" fill="url(#cyl)"/>
+    <!-- lugs where the strap enters the case -->
+    <rect x="288" y="414" width="224" height="52" rx="15" fill="url(#lugG)"/>
+    <rect x="288" y="788" width="224" height="52" rx="15" fill="url(#lugG)"/>
+    <rect x="288.6" y="414.6" width="222.8" height="50.8" rx="14.5" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="1.2"/>
+    <rect x="288.6" y="788.6" width="222.8" height="50.8" rx="14.5" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="1.2"/>
+    <rect x="240" y="436" width="320" height="382" rx="84" fill="url(#metal)"/>
   </g>
-  <rect x="240.8" y="436.8" width="318.4" height="380.4" rx="83" fill="none" stroke="url(#rim)" stroke-width="2.4" opacity=".85"/>
-  <rect x="262" y="458" width="276" height="338" rx="62" fill="#050404"/>
+  <rect x="241" y="437" width="318" height="380" rx="83" fill="none" stroke="url(#metalEdge)" stroke-width="2.2"/>
+  <rect x="244" y="440" width="312" height="374" rx="80" fill="none" stroke="url(#rim)" stroke-width="1.6" opacity=".55"/>
+  <!-- black glass bezel and display -->
+  <rect x="253" y="449" width="294" height="356" rx="70" fill="#080606"/>
+  <rect x="253.6" y="449.6" width="292.8" height="354.8" rx="69.5" fill="none" stroke="url(#edgeSpec)" stroke-width="1.6"/>
+  <rect x="262" y="458" width="276" height="338" rx="62" fill="#000"/>
 
   <!-- screen -->
   <g clip-path="url(#screen)" font-family="-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif">
@@ -90,8 +107,8 @@
     <circle cx="498" cy="752" r="21" fill="#2a2525"/>
     <path d="M493 743 L502 752 L493 761" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <!-- screen glare -->
-  <path d="M262 520 Q262 458 324 458 H430 Q330 480 262 600 Z" fill="#fff" opacity=".06"/>
+  <!-- glass reflection -->
+  <rect x="262" y="458" width="276" height="338" rx="62" fill="url(#glassG)"/>
 
   <!-- floating rest timer above the watch -->
   <g transform="rotate(-3 400 232)" filter="url(#shadow)" font-family="-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif">
