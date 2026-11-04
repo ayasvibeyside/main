@@ -94,8 +94,8 @@ const principles = [
 <Base title="About" description={`About ${site.name}: ${site.role}.`}>
   <div class="relative isolate">
   <AboutBackdrop />
-  <section class="frame grid grid-cols-4 items-start gap-x-6 gap-y-14 pt-8 sm:pt-8 md:gap-x-12">
-    <div class="col-span-4 md:col-span-2">
+  <section class="frame grid grid-cols-1 items-start gap-x-6 gap-y-14 pt-8 sm:pt-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-x-12">
+    <div>
       <h1 class="settle font-serif text-[2.6rem] font-light leading-[1.08] tracking-[-0.02em] sm:text-[3.6rem]">
         Hi, I’m {site.firstName}.
       </h1>
@@ -113,7 +113,7 @@ const principles = [
         <a href={site.resume} class="text-ink underline underline-offset-[0.2em] hover:text-dusk">résumé</a>.
       </p>
     </div>
-    <div class="col-span-4 md:col-span-2">
+    <div>
       <DiamondPainting />
     </div>
   </section>

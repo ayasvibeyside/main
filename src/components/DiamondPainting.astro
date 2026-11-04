@@ -93,14 +93,15 @@ const counts = Object.fromEntries(
 
 <style>
   .dp-card {
-    /* As wide as the column allows, but never so tall that it drops below the fold: the width
-       follows the screen height, and the board (a square) fills the card edge to edge. */
-    width: min(100%, max(330px, calc(100svh - 400px + 3rem)));
+    /* The board is a square sized by the screen height (so the card stays above the fold); the card
+       is wider than the board, with space at the sides for the board, tray and buttons to breathe. */
+    --s: max(300px, calc(100svh - 400px));
+    width: min(100%, calc(var(--s) + 7rem));
     margin-left: auto;
     background: var(--color-night);
     color: #f2e9ef;
     border-radius: 28px;
-    padding: 1.5rem 1.5rem 1.25rem;
+    padding: 1.5rem 3.5rem 1.4rem;
     box-shadow: 0 30px 60px -30px rgb(42 8 23 / 0.7);
   }
   .dp-card[data-done='true'] {
@@ -189,6 +190,9 @@ const counts = Object.fromEntries(
   }
   .dp-btn:hover { background: rgb(255 255 255 / 0.18); }
   .dp-btn[aria-pressed='false'] { color: #b79aac; text-decoration: line-through; }
+  @media (max-width: 767px) {
+    .dp-card { width: 100%; padding: 1.25rem; }
+  }
   .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ede288; }
   /* visually hidden iOS "switch" used only to trigger a haptic tick on iPhone */
   .dp-haptic { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; pointer-events: none; }
