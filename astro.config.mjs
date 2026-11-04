@@ -6,12 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 // The site's public address, used for link previews and the sitemap.
 // On Vercel this fills itself in from your project's domain. To pin a custom domain,
-// add SITE_URL (e.g. https://ayafouad.com) in Vercel → Settings → Environment Variables.
+// add SITE_URL (e.g. https://afouad.vercel.app) in Vercel → Settings → Environment Variables.
 const site =
   process.env.SITE_URL ??
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'https://ayafouad.com');
+    : 'https://afouad.vercel.app');
 
 export default defineConfig({
   // The old MDX case study is replaced by the custom page.
