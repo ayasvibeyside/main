@@ -92,5 +92,40 @@ const nav = [
         <p class="sm:text-right">©{new Date().getFullYear()}</p>
       </div>
     </footer>
+
+    <p
+      id="mail-toast"
+      role="status"
+      aria-live="polite"
+      hidden
+      class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-ink px-5 py-2.5 text-sm text-paper"
+    >
+    </p>
+
+    <script>
+      // Many desktop browsers have no mail app, so a mailto: link can look broken.
+      // Copy the address too and say so; if a mail app does open, nothing is lost.
+      const toast = document.getElementById('mail-toast');
+      let timer: number | undefined;
+      document.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="mailto:"]');
+        if (!link || !toast) return;
+        const address = decodeURIComponent(link.getAttribute('href')!.slice(7).split('?')[0]);
+        const show = (msg: string) => {
+          toast.textContent = msg;
+          toast.hidden = false;
+          clearTimeout(timer);
+          timer = window.setTimeout(() => (toast.hidden = true), 3500);
+        };
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(address).then(
+            () => show(`${address} copied to your clipboard`),
+            () => show(`Email me at ${address}`),
+          );
+        } else {
+          show(`Email me at ${address}`);
+        }
+      });
+    </script>
   </body>
 </html>
