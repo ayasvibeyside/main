@@ -35,8 +35,8 @@ const pattern = [
 
 // Gem colours, numbered like the key on a real diamond painting kit.
 const colors = [
-  { key: 'Y', n: 1, name: 'Yellow', hex: '#ede288' },
-  { key: 'L', n: 2, name: 'Pale yellow', hex: '#f8f2be' },
+  { key: 'Y', n: 1, name: 'Yellow', hex: '#ffda8f' },
+  { key: 'L', n: 2, name: 'Pale yellow', hex: '#fff0c9' },
   { key: 'M', n: 3, name: 'Mustard', hex: '#daa43c' },
   { key: 'P', n: 4, name: 'Plum', hex: '#a12b63' },
   { key: 'K', n: 5, name: 'Lilac', hex: '#e5d5e1' },
@@ -106,8 +106,8 @@ const counts = Object.fromEntries(
   }
   .dp-card[data-done='true'] {
     box-shadow:
-      0 0 0 1px rgb(237 226 136 / 0.5),
-      0 30px 70px -20px rgb(237 226 136 / 0.35);
+      0 0 0 1px rgb(255 218 143 / 0.5),
+      0 30px 70px -20px rgb(255 218 143 / 0.35);
   }
   .dp-hint {
     margin-top: 0.4rem;
@@ -176,7 +176,7 @@ const counts = Object.fromEntries(
   }
   .dp-progress { flex: 1; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #d9c3d4; }
   .dp-bar { flex: 1; min-width: 4rem; height: 5px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
-  .dp-fill { display: block; height: 100%; width: 0; background: #ede288; border-radius: inherit; transition: width 250ms ease-out; }
+  .dp-fill { display: block; height: 100%; width: 0; background: #ffda8f; border-radius: inherit; transition: width 250ms ease-out; }
   .dp-count { font-variant-numeric: tabular-nums; }
   .dp-actions { display: flex; gap: 0.4rem; }
   .dp-btn {
@@ -193,7 +193,7 @@ const counts = Object.fromEntries(
   @media (max-width: 767px) {
     .dp-card { width: 100%; padding: 1.25rem; }
   }
-  .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ede288; }
+  .dp-swatch:focus-visible, .dp-btn:focus-visible, .dp-canvas:focus-visible { outline: 2px solid #ffda8f; }
   /* visually hidden iOS "switch" used only to trigger a haptic tick on iPhone */
   .dp-haptic { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; pointer-events: none; }
   @keyframes dp-hint {
@@ -393,7 +393,7 @@ const counts = Object.fromEntries(
         }
       }
       if (showFocus) {
-        ctx.strokeStyle = '#ede288';
+        ctx.strokeStyle = '#ffda8f';
         ctx.lineWidth = 2;
         round(focus.x * cell + 0.5, focus.y * cell + 0.5, cell - 1, cell - 1, cell * 0.25);
         ctx.stroke();

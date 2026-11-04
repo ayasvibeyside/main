@@ -6,7 +6,7 @@
   Calm, low-contrast surfaces with one deep ink colour for text.
 */
 @theme {
-  /* Wild orchid test palette: #EDE288 yellow, #771441 plum, #DAA43C mustard, #E5D5E1 lilac */
+  /* Wild orchid palette (lilac, plum, mustard) with the yellow swapped for #FFDA8F */
   --color-paper: #e5d5e1;      /* page background, soft lilac */
   --color-surface: #f2e9ef;    /* card surface, a lighter lilac */
   --color-ink: #4a0d28;        /* body text, deep plum */
@@ -17,9 +17,9 @@
 
   /* Card tints for case studies on the board */
   --color-tint-mist: #e5d5e1;  /* lilac */
-  --color-tint-sage: #ede288;  /* yellow */
+  --color-tint-sage: #ffda8f;  /* peach yellow */
   --color-tint-dusk: #d9c3d4;  /* deeper lilac */
-  --color-tint-clay: #daa43c;  /* mustard */
+  --color-tint-clay: #ffda8f;  /* peach yellow */
   --color-tint-slate: #771441; /* plum */
   --color-tint-noir: #181413;  /* Kiss of Lift: its own neon-on-black brand */
 
