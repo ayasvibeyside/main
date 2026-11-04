@@ -93,8 +93,9 @@ const counts = Object.fromEntries(
 
 <style>
   .dp-card {
-    /* Fills its column (wider than before) with generous padding, so the board has room to breathe. */
-    width: 100%;
+    /* As wide as the column allows, but never so tall that it drops below the fold: the width
+       follows the screen height, and the board (a square) fills the card edge to edge. */
+    width: min(100%, max(330px, calc(100svh - 400px + 3rem)));
     margin-left: auto;
     background: var(--color-night);
     color: #f2e9ef;
