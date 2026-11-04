@@ -147,8 +147,8 @@ html[data-over='stage'] .site-header {
 
 /* Float: the cover bobs gently, as if hovering */
 @keyframes cover-float {
-  0%, 100% { transform: translateY(0) rotate(-0.6deg); }
-  50% { transform: translateY(-16px) rotate(0.6deg); }
+  0%, 100% { transform: translateY(0) rotate(-0.3deg); }
+  50% { transform: translateY(-8px) rotate(0.3deg); }
 }
 .cover-float {
   animation: cover-float 7s ease-in-out infinite;
