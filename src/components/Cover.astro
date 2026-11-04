@@ -14,7 +14,7 @@ interface Props {
 }
 
 const { data, eager = false, href } = Astro.props;
-const { tint, cover, coverAlt = '', coverStyle, coverFocus, coverLive } = data;
+const { tint, cover, coverAlt = '', coverStyle, coverFocus, coverLive, coverSpin } = data;
 const focus = { center: 'object-center', left: 'object-left', right: 'object-right' }[coverFocus];
 const bleed = cover && coverStyle === 'bleed';
 ---
@@ -41,7 +41,7 @@ const bleed = cover && coverStyle === 'bleed';
                 <MarketBreadthCover src={cover} alt={coverAlt} eager={eager} />
               )
             ) : cover && href ? (
-              <a href={href} class="cover-link block h-full w-full" tabindex="-1" aria-hidden="true">
+              <a href={href} class:list={['cover-link block h-full w-full', coverSpin && 'cover-spin']} tabindex="-1" aria-hidden="true">
                 <img
                   src={cover}
                   alt=""
@@ -54,7 +54,7 @@ const bleed = cover && coverStyle === 'bleed';
               <img
                 src={cover}
                 alt={coverAlt}
-                class:list={['cover-art h-full w-full object-contain', focus]}
+                class:list={['cover-art h-full w-full object-contain', focus, coverSpin && 'cover-spin']}
                 loading={eager ? 'eager' : 'lazy'}
               />
             ) : (

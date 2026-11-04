@@ -31,6 +31,8 @@ const work = defineCollection({
     coverStyle: z.enum(['frame', 'bleed']).default('frame'),
     // Which side stays visible when the cover is trimmed on narrow screens
     coverFocus: z.enum(['center', 'left', 'right']).default('center'),
+    // Slowly turn the cover like a turntable (very slow, off for reduced motion)
+    coverSpin: z.boolean().default(false),
     // Optional animated cover. 'market-breadth' draws ThndrX's live advancers/decliners chip
     coverLive: z.enum(['market-breadth']).optional(),
     // Lower numbers appear first on the board

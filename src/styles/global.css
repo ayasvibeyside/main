@@ -144,3 +144,16 @@ html[data-over='stage'] .site-header {
     filter: drop-shadow(0 22px 28px rgb(15 22 26 / 0.22));
   }
 }
+
+/* Turntable: the cover turns on its vertical axis, very slowly (one turn every 3 minutes) */
+@keyframes cover-turn {
+  from { transform: perspective(1600px) rotateY(0deg); }
+  to { transform: perspective(1600px) rotateY(360deg); }
+}
+.cover-spin {
+  animation: cover-turn 180s linear infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-spin { animation: none; }
+}
