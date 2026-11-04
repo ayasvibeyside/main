@@ -51,7 +51,7 @@ const counts = Object.fromEntries(
 <section class="dp" data-dp data-pattern={JSON.stringify(pattern)} data-colors={JSON.stringify(colors)} aria-labelledby="dp-title">
   <div class="dp-card">
     <div class="dp-head">
-      <h2 id="dp-title" class="font-serif text-[1.35rem] font-light leading-tight tracking-[-0.01em]">
+      <h2 id="dp-title" class="font-serif text-[1.5rem] font-light leading-tight tracking-[-0.01em]">
         My current obsession: diamond painting
       </h2>
       <p class="dp-hint">Pick a colour, then click or drag.</p>
@@ -93,13 +93,13 @@ const counts = Object.fromEntries(
 
 <style>
   .dp-card {
-    /* As wide as the board needs to be to fit above the fold; the board fills it edge to edge. */
-    width: min(100%, max(320px, calc(100svh - 420px + 2rem)));
+    /* Fills its column (wider than before) with generous padding, so the board has room to breathe. */
+    width: 100%;
     margin-left: auto;
     background: var(--color-night);
     color: #f2e9ef;
-    border-radius: 24px;
-    padding: 1rem;
+    border-radius: 28px;
+    padding: 1.5rem 1.5rem 1.25rem;
     box-shadow: 0 30px 60px -30px rgb(42 8 23 / 0.7);
   }
   .dp-card[data-done='true'] {
@@ -108,8 +108,8 @@ const counts = Object.fromEntries(
       0 30px 70px -20px rgb(237 226 136 / 0.35);
   }
   .dp-hint {
-    margin-top: 0.25rem;
-    font-size: 0.88rem;
+    margin-top: 0.4rem;
+    font-size: 0.92rem;
     color: #d9c3d4;
   }
   /* The canvas is sized by the screen height, so the whole card fits above the fold. */
@@ -117,8 +117,8 @@ const counts = Object.fromEntries(
     display: block;
     width: 100%;
     aspect-ratio: 1;
-    margin: 0.75rem 0 0;
-    border-radius: 16px;
+    margin: 1.1rem 0 0;
+    border-radius: 18px;
     background: #1f0612;
     touch-action: none;
     cursor: pointer;
@@ -127,16 +127,16 @@ const counts = Object.fromEntries(
   .dp-tray {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.4rem;
-    margin-top: 0.7rem;
+    gap: 0.55rem;
+    margin-top: 1.1rem;
   }
   .dp-swatch {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    padding: 0.4rem 0.3rem;
-    border-radius: 12px;
+    padding: 0.6rem 0.3rem;
+    border-radius: 14px;
     background: rgb(255 255 255 / 0.06);
     border: 1.5px solid transparent;
     color: inherit;
@@ -169,8 +169,8 @@ const counts = Object.fromEntries(
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.6rem;
-    margin-top: 0.7rem;
+    gap: 0.75rem;
+    margin-top: 1.1rem;
   }
   .dp-progress { flex: 1; display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; color: #d9c3d4; }
   .dp-bar { flex: 1; min-width: 4rem; height: 5px; border-radius: 999px; background: rgb(255 255 255 / 0.14); overflow: hidden; }
