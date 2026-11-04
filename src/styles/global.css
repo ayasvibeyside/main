@@ -101,11 +101,13 @@
 
 /* ---------- Layout frame shared by header, stage and footer ---------- */
 .frame {
-  padding-inline: 1rem;
+  padding-inline: 1.25rem;
+  max-width: 1680px;
+  margin-inline: auto;
 }
 @media (min-width: 640px) {
   .frame {
-    padding-inline: 1.5rem;
+    padding-inline: clamp(1.5rem, 7vw, 8rem);
   }
 }
 
