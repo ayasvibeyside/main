@@ -19,13 +19,14 @@ export async function getStaticPaths() {
 
 const { entry, index, total, next } = Astro.props;
 const { Content, headings } = await render(entry);
-const { title, summary, category, year, role, timeline, scope, team, outcome, links, tint } =
+const { title, summary, category, year, role, timeline, scope, team, outcome, links, tint, status } =
   entry.data;
 const sections = headings.filter((h) => h.depth === 2);
 const fg = tintFg[tint];
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const facts = [
+  { label: 'Status', value: status === 'coming-soon' ? 'Coming soon' : undefined },
   { label: 'Role', value: role },
   { label: 'Timeline', value: timeline },
   { label: 'Scope', value: scope },

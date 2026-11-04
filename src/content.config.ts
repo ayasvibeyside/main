@@ -37,6 +37,8 @@ const work = defineCollection({
     order: z.number().default(10),
     // Optional: your own case-study page, e.g. /case-studies/traders/. Replaces the site template.
     caseStudy: z.string().optional(),
+    // Optional: mark a project that isn't launched yet. Shown as "Coming soon" on the home page.
+    status: z.enum(['coming-soon']).optional(),
     draft: z.boolean().default(false),
   }),
 });

@@ -64,7 +64,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 {entry.data.summary}
               </p>
               <a href={caseStudyHref(entry)} class="mt-4 inline-block text-sm underline">
-                Open case study
+                {entry.data.status === 'coming-soon' ? 'Coming soon' : 'Open case study'}
               </a>
             </div>
           </article>
