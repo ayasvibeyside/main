@@ -16,19 +16,6 @@ const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
 
   <Showcase work={work} />
 
-  <section class="frame grid grid-cols-4 gap-x-6 gap-y-10 pt-28 sm:pt-36">
-    <h2
-      class="col-span-4 max-w-[19ch] font-serif text-[2.4rem] font-light leading-[1.08] tracking-[-0.02em] md:col-span-3 md:col-start-2 sm:text-[3.6rem]"
-    >
-      I design products, and I’m learning to decide which ones get built.
-    </h2>
-    <p class="col-span-4 max-w-[52ch] text-lg leading-relaxed text-ink-soft md:col-span-2 md:col-start-2">
-      Product designer since 2020, now moving into product management. I’ve worked on a
-      trading platform used across the Thndr app and web, and on a game that teaches
-      business acumen.
-    </p>
-  </section>
-
   <section aria-labelledby="index-heading" class="frame mt-24 grid grid-cols-4 gap-x-6">
     <h2 id="index-heading" class="col-span-4 mb-4 text-sm text-ink-soft md:col-span-1">
       All case studies
