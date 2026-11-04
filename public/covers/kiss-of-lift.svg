@@ -7,9 +7,9 @@
       45%,72%{transform:translateY(-144px);animation-timing-function:cubic-bezier(.45,0,.2,1)}
       84%,100%{transform:translateY(0)}
     }
-    /* Heart: a lub-dub pulse */
-    .beat{transform-box:fill-box;transform-origin:center;animation:beat .75s ease-in-out infinite}
-    @keyframes beat{0%{transform:scale(1)}12%{transform:scale(1.24)}24%{transform:scale(1)}38%{transform:scale(1.15)}54%,100%{transform:scale(1)}}
+    /* Heart: one soft bounce per beat, like the Apple Watch */
+    .beat{transform-box:fill-box;transform-origin:center;animation:beat .9s ease-out infinite}
+    @keyframes beat{0%{transform:scale(1)}16%{transform:scale(1.22);animation-timing-function:ease-in-out}42%,100%{transform:scale(1)}}
     /* Recovery: drifts from 74 to 72 over 30s, then holds */
     .ringG{animation:drain 30s linear forwards}
     @keyframes drain{from{stroke-dasharray:381 515}to{stroke-dasharray:371 515}}
