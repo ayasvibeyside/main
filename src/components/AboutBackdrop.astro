@@ -19,9 +19,9 @@ const spots = [
         <feGaussianBlur in="d" stdDeviation="3.2" />
       </filter>
       <radialGradient id="petal" cx="50%" cy="42%" r="70%">
-        <stop offset="0" stop-color="#fff3d0" />
-        <stop offset="0.55" stop-color="#ffda8f" />
-        <stop offset="1" stop-color="#f0bf6a" />
+        <stop offset="0" stop-color="#fbf6cc" />
+        <stop offset="0.55" stop-color="#ede288" />
+        <stop offset="1" stop-color="#d9c85a" />
       </radialGradient>
       <symbol id="orchid-bloom" viewBox="0 0 400 400">
         <g filter="url(#watercolour)">
@@ -30,13 +30,13 @@ const spots = [
           <ellipse cx="258" cy="292" rx="46" ry="92" transform="rotate(-28 258 292)" fill="url(#petal)" />
           <ellipse cx="108" cy="186" rx="108" ry="80" transform="rotate(-16 108 186)" fill="url(#petal)" />
           <ellipse cx="292" cy="186" rx="108" ry="80" transform="rotate(16 292 186)" fill="url(#petal)" />
-          {spots.map(([x, y]) => <circle cx={x} cy={y} r="9" fill="#7a1228" opacity="0.75" />)}
-          <ellipse cx="168" cy="240" rx="34" ry="46" transform="rotate(-22 168 240)" fill="#ea9dc9" />
-          <ellipse cx="232" cy="240" rx="34" ry="46" transform="rotate(22 232 240)" fill="#ea9dc9" />
-          <ellipse cx="200" cy="276" rx="30" ry="52" fill="#ea9dc9" />
-          <ellipse cx="200" cy="238" rx="22" ry="32" fill="#4c0410" />
-          <ellipse cx="200" cy="184" rx="28" ry="30" fill="#c3cb68" />
-          <ellipse cx="200" cy="206" rx="13" ry="14" fill="#4c0410" />
+          {spots.map(([x, y]) => <circle cx={x} cy={y} r="9" fill="#771441" opacity="0.8" />)}
+          <ellipse cx="168" cy="240" rx="34" ry="46" transform="rotate(-22 168 240)" fill="#daa43c" />
+          <ellipse cx="232" cy="240" rx="34" ry="46" transform="rotate(22 232 240)" fill="#daa43c" />
+          <ellipse cx="200" cy="276" rx="30" ry="52" fill="#daa43c" />
+          <ellipse cx="200" cy="238" rx="22" ry="32" fill="#771441" />
+          <ellipse cx="200" cy="184" rx="28" ry="30" fill="#e5d5e1" />
+          <ellipse cx="200" cy="206" rx="13" ry="14" fill="#771441" />
         </g>
       </symbol>
     </defs>
@@ -57,12 +57,12 @@ const spots = [
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
     mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
     background:
-      radial-gradient(60% 30% at 92% 3%, rgb(255 218 143 / 0.95), transparent 72%),
-      radial-gradient(46% 24% at 3% 17%, rgb(234 157 201 / 0.55), transparent 72%),
-      radial-gradient(55% 22% at 72% 36%, rgb(195 203 104 / 0.4), transparent 70%),
-      radial-gradient(50% 22% at 6% 52%, rgb(234 157 201 / 0.4), transparent 70%),
-      radial-gradient(58% 24% at 94% 70%, rgb(255 218 143 / 0.7), transparent 70%),
-      radial-gradient(70% 22% at 18% 97%, rgb(195 203 104 / 0.45), transparent 70%);
+      radial-gradient(60% 30% at 92% 3%, rgb(237 226 136 / 0.95), transparent 72%),
+      radial-gradient(46% 24% at 3% 17%, rgb(218 164 60 / 0.55), transparent 72%),
+      radial-gradient(55% 22% at 72% 36%, rgb(237 226 136 / 0.6), transparent 70%),
+      radial-gradient(50% 22% at 6% 52%, rgb(119 20 65 / 0.2), transparent 70%),
+      radial-gradient(58% 24% at 94% 70%, rgb(218 164 60 / 0.5), transparent 70%),
+      radial-gradient(70% 22% at 18% 97%, rgb(237 226 136 / 0.6), transparent 70%);
   }
   .bloom {
     position: absolute;

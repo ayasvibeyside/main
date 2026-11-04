@@ -10,10 +10,10 @@ export const tintBg = {
 
 // Text colour used on top of each tint in full-screen areas
 export const tintFg = {
-  mist: '#4c0410',
-  sage: '#4c0410',
-  dusk: '#4c0410',
-  clay: '#4c0410',
-  slate: '#ffda8f',
+  mist: '#4a0d28',
+  sage: '#4a0d28',
+  dusk: '#4a0d28',
+  clay: '#4a0d28',
+  slate: '#f2e9ef',
   noir: '#f4f0ee',
 } as const;
