@@ -9,7 +9,7 @@ Astro + Tailwind v4 static site, deployed on Vercel from GitHub (every push to `
 - `src/pages/index.astro`: home page. Full-screen showcase (`src/components/Showcase.astro`), then intro, case-study index and notes.
 - `src/pages/work/[...slug].astro`: case-study template.
 - `public/covers/`: cover images, referenced as `cover: /covers/name.png`.
-- `src/pages/about.astro`: About page. `src/components/AboutBackdrop.astro` is its blended palette and orchid-bloom background; `src/components/DiamondPainting.astro` is the interactive diamond painting (pattern and gem colours are at the top of the file; sounds are synthesized, no audio files).
+- `src/pages/about.astro`: About page. `src/components/AboutBackdrop.astro` is its blended palette and orchid-bloom background; `src/components/DiamondPainting.astro` is the interactive diamond painting (pattern and gem colours are at the top of the file; sounds are synthesized, no audio files). The About page has its own palette (alstroemeria: peach, pink, maroon, lime), switched on with `<Base palette="alstroemeria">`; the tokens are overridden under `[data-palette]` in `global.css`, and the rest of the site keeps the orchid palette.
 
 ## Design rules
 - Calm and quiet: sage-grey paper, one deep ink, one accent (`dusk`). No new accent colours.
