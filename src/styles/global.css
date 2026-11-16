@@ -27,6 +27,22 @@
   --font-sans: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
+/*
+  About page palette (alstroemeria): #FFDA8F peach, #EA9DC9 pink, #4C0410 maroon, #C3CB68 lime.
+  Switched on per page with <Base palette="alstroemeria">, so the rest of the site keeps the
+  orchid palette above. It only redefines the tokens; components read them as usual.
+*/
+[data-palette='alstroemeria'] {
+  --color-paper: #fff1d6;      /* warm cream */
+  --color-surface: #fff8e8;    /* lighter cream */
+  --color-ink: #4c0410;        /* deep maroon */
+  --color-ink-soft: #7e3045;
+  --color-line: #e9cdb2;
+  --color-night: #34060f;      /* behind the diamond painting */
+  --color-dusk: #9c2a58;       /* links and focus: deep pink-maroon */
+  --color-tint-dusk: #ea9dc9;  /* text selection */
+}
+
 @layer base {
   html {
     background: var(--color-paper);

@@ -11,9 +11,11 @@ interface Props {
   description?: string;
   // stage: the header floats over full-screen colour (home page and case-study heroes)
   stage?: boolean;
+  // Optional palette for a single page, e.g. 'alstroemeria' (see global.css)
+  palette?: string;
 }
 
-const { title, description = site.description, stage = false } = Astro.props;
+const { title, description = site.description, stage = false, palette } = Astro.props;
 const pageTitle = title ? `${title} | ${site.name}` : `${site.name}, ${site.role.toLowerCase()}`;
 const path = Astro.url.pathname;
 const nav = [
@@ -24,7 +26,7 @@ const nav = [
 ---
 
 <!doctype html>
-<html lang="en" data-stage={stage ? 'on' : 'off'}>
+<html lang="en" data-stage={stage ? 'on' : 'off'} data-palette={palette}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
